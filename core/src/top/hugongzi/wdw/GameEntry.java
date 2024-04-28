@@ -25,7 +25,7 @@ import java.util.Stack;
 public class GameEntry implements ApplicationListener, InputProcessor {
     public static String CLASSNAME = GameEntry.class.getSimpleName();
     public static String GAMENAME = "wdw";
-    public static String GAMEVERSION = "t0.2.2";
+    public static String GAMEVERSION = "t0.2.4";
 
     public static SpriteBatch batch;
     public static Input input;
@@ -34,6 +34,10 @@ public class GameEntry implements ApplicationListener, InputProcessor {
     private static Stack<AbstractScreen> screens = new Stack<>();
     private static List<AbstractScreen> InsertScreens = new ArrayList<>();
 
+    /**
+     * 在待渲染列表中加入新屏幕，等待下一帧渲染
+     * @param screen 加入渲染列表的屏幕
+     */
     public static void addScreen(AbstractScreen screen) {
         InsertScreens.add(0, screen);
         screen.removeable(false);
@@ -59,6 +63,7 @@ public class GameEntry implements ApplicationListener, InputProcessor {
     public void render() {
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        //如果屏幕被标记为IsMarkedRemove，在当前屏幕列表中删除
         screens.removeIf(AbstractScreen::removeable);
         for (int i = 0; i < screens.size(); ++i) {
             if (screens.get(i).removeable()) {

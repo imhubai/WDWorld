@@ -20,7 +20,7 @@ public class Font implements Disposable {
         Log.i("FontInit << " + fontPath);
         //font = new BitmapFont(Gdx.files.internal(FontPath));
         FreeTypeFontGenerator freeTypeFontGenerator = new FreeTypeFontGenerator(Gdx.files.internal(fontPath));
-        font = new LazyBitmapFont(freeTypeFontGenerator, 16);
+        font = new LazyBitmapFont(freeTypeFontGenerator, 20);
     }
 
     public BitmapFont getFont() {

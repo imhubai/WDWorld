@@ -19,6 +19,7 @@ tasks.register('run', JavaExec) {
         // Required to run on macOS
         jvmArgs += "-XstartOnFirstThread"
     }
+    jvmArgs+="--warning-mode all";
 }
 
 tasks.register('debug', JavaExec) {
