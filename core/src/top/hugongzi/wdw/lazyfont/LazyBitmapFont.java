@@ -1,8 +1,5 @@
 package top.hugongzi.wdw.lazyfont;
 
-import java.lang.reflect.Field;
-
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
@@ -19,34 +16,30 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.GlyphAndBitm
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import top.hugongzi.wdw.fcore.Log;
 
+import java.lang.reflect.Field;
+
 /**
  * GDX-LAZY-FONT for LibGDX 1.5.0+<br/>
  * <b>Auto generate & manage your bitmapfont without pre-generate.</b>
  *
+ * @author dingjibang
  * @version 2.1.5
  * @see /dingjibang/GDX-LAZY-FONT
- * @author dingjibang
- *
  */
 public class LazyBitmapFont extends BitmapFont {
 
+    private static FreeTypeFontGenerator GLOBAL_GEN = null;
     private FreeTypeFontGenerator generator;
     private FreeTypeBitmapFontData data;
     private FreeTypeFontParameter parameter;
 
-    private static FreeTypeFontGenerator GLOBAL_GEN = null;
-
-    public static void setGlobalGenerator(FreeTypeFontGenerator generator){
-        GLOBAL_GEN = generator;
-    }
-
-    public LazyBitmapFont(int fontSize){
-        this(GLOBAL_GEN,fontSize);
+    public LazyBitmapFont(int fontSize) {
+        this(GLOBAL_GEN, fontSize);
     }
 
     public LazyBitmapFont(FreeTypeFontGenerator generator, int fontSize) {
         Log.i("LazyBitmapFont v2.1.5 by dingjibang");
-        if(generator == null)
+        if (generator == null)
             throw new GdxRuntimeException("lazyBitmapFont global generator must be not null to use this constructor.");
         this.generator = generator;
         FreeTypeFontParameter param = new FreeTypeFontParameter();
@@ -64,8 +57,12 @@ public class LazyBitmapFont extends BitmapFont {
         genrateData();
     }
 
+    public static void setGlobalGenerator(FreeTypeFontGenerator generator) {
+        GLOBAL_GEN = generator;
+    }
+
     private void genrateData() {
-        Face face = null;
+        Face face;
         try {
             Field field = generator.getClass().getDeclaredField("face");
             field.setAccessible(true);
@@ -83,7 +80,7 @@ public class LazyBitmapFont extends BitmapFont {
         if (spaceGlyph == null) {
             spaceGlyph = new Glyph();
             spaceGlyph.xadvance = (int) data.spaceXadvance;
-            spaceGlyph.id = (int) ' ';
+            spaceGlyph.id = ' ';
             data.setGlyph(' ', spaceGlyph);
         }
         if (spaceGlyph.width == 0)
@@ -156,7 +153,7 @@ public class LazyBitmapFont extends BitmapFont {
             if (gab == null || gab.bitmap == null)
                 return null;
 
-            Pixmap map = gab.bitmap.getPixmap(Format.RGBA8888, Color.WHITE,1f);
+            Pixmap map = gab.bitmap.getPixmap(Format.RGBA8888, Color.WHITE, 1f);
             TextureRegion rg = new TextureRegion(new Texture(map));
             map.dispose();
 

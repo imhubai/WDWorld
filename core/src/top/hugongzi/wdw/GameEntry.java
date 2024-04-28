@@ -3,15 +3,16 @@ package top.hugongzi.wdw;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.GL32;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import top.hugongzi.wdw.fcore.Log;
 import top.hugongzi.wdw.gui.Screens.AbstractScreen;
+import top.hugongzi.wdw.gui.Screens.LoginScreen;
 import top.hugongzi.wdw.gui.Text.Font;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 /**
@@ -23,13 +24,20 @@ import java.util.Stack;
 public class GameEntry implements ApplicationListener {
     public static String CLASSNAME = GameEntry.class.getSimpleName();
     public static String GAMENAME = "wdw";
-    public static String GAMEVERSION = "t0.2.1";
+    public static String GAMEVERSION = "t0.2.2";
 
     public static SpriteBatch batch;
     public static Input input;
     public static BitmapFont font;
 
-    private Stack<AbstractScreen> screenStack;
+    private static Stack<AbstractScreen> screens = new Stack<>();
+    private static List<AbstractScreen> InsertScreens = new ArrayList<>();
+
+    public static void addScreen(AbstractScreen screen) {
+        InsertScreens.add(0, screen);
+        screen.removeable(false);
+        Log.i("Screens << " + screen);
+    }
 
     public void create() {
         Log.i(CLASSNAME + " -> create()");
@@ -38,17 +46,26 @@ public class GameEntry implements ApplicationListener {
         Log.i("| | | |  |  | | | | . |  _| | . |");
         Log.i("|_____|____/|_____|___|_| |_|___|");
         Log.i(GAMENAME + " - " + GAMEVERSION + " Running!");
-        batch=new SpriteBatch();
-        font=new Font().getFont();
+
+        batch = new SpriteBatch();
+        font = new Font().getFont();
+        LoginScreen loginScreen = new LoginScreen();
+        loginScreen.create();
+        addScreen(loginScreen);
     }
 
     public void render() {
-        Gdx.gl.glClearColor(0,0,0,1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        batch.begin();
-        font.setColor(Color.valueOf("#ffffff"));
-        font.draw(batch,"中文字体测试1a",20,400);
-        batch.end();
+        screens.removeIf(AbstractScreen::removeable);
+        screens.addAll(InsertScreens);
+        InsertScreens.clear();
+        for (int i = screens.size() - 1; i >= 0; --i) {
+            AbstractScreen s = screens.elementAt(i);
+            Log.d("screen draw << "+s);
+            s.act();
+            s.draw();
+        }
     }
 
     public void resize(int width, int height) {
@@ -63,6 +80,7 @@ public class GameEntry implements ApplicationListener {
     }
 
     public void dispose() {
+        batch.dispose();
+        font.dispose();
     }
-
 }

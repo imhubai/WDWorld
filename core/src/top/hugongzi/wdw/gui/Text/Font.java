@@ -13,14 +13,13 @@ import top.hugongzi.wdw.lazyfont.LazyBitmapFont;
  * @author Hubai
  */
 public class Font implements Disposable {
-    private String FontPath = "CubicFont/Cubic.ttf";
-    private String Symbol_cn = "CharTXT/CN_3500.txt";
-    private BitmapFont font;
+    private final BitmapFont font;
 
     public Font() {
-        Log.i("FontInit - " + FontPath);
+        String fontPath = "Fonts/Cubic.ttf";
+        Log.i("FontInit << " + fontPath);
         //font = new BitmapFont(Gdx.files.internal(FontPath));
-        FreeTypeFontGenerator freeTypeFontGenerator = new FreeTypeFontGenerator(Gdx.files.internal(FontPath));
+        FreeTypeFontGenerator freeTypeFontGenerator = new FreeTypeFontGenerator(Gdx.files.internal(fontPath));
         font = new LazyBitmapFont(freeTypeFontGenerator, 16);
     }
 

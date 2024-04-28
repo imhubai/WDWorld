@@ -1,19 +1,33 @@
 package top.hugongzi.wdw.gui.Screens;
 
 import com.badlogic.gdx.InputProcessor;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import top.hugongzi.wdw.Game;
 
-public class AbstractScreen implements InputProcessor {
-    protected final Stage stage;
-    protected final Game game;
+import java.util.ArrayList;
+import java.util.List;
 
-    public AbstractScreen(Stage stage, Game game) {
-        this.stage = stage;
-        this.game = game;
+public abstract class AbstractScreen implements InputProcessor {
+    public Stage stage;
+    public boolean isMarkedRemove = false;
+    private List<InputProcessor> processors = new ArrayList<>();
+
+    public abstract void create();
+
+    public abstract void draw();
+
+    public abstract void act();
+
+    public boolean removeable() {
+        return isMarkedRemove;
     }
 
+    public void removeable(boolean flag) {
+        isMarkedRemove = flag;
+    }
+
+    public void remove() {
+        isMarkedRemove = true;
+    }
 
     @Override
     public boolean keyDown(int i) {
