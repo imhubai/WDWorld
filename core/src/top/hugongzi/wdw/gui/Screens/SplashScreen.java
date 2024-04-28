@@ -3,19 +3,16 @@ package top.hugongzi.wdw.gui.Screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import top.hugongzi.wdw.Game;
 import top.hugongzi.wdw.GameEntry;
 import top.hugongzi.wdw.fcore.Log;
 
 public class SplashScreen extends AbstractScreen {
     @Override
     public void create() {
-        stage = Game.stage();
+        stage = GameEntry.stage();
         Texture texture = new Texture(Gdx.files.internal("Images/bg_gal.png"));
 
         Image image = new Image(new TextureRegion(texture));
@@ -27,7 +24,7 @@ public class SplashScreen extends AbstractScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Log.i("Image clicked");
-                isMarkedRemove=true;
+                isMarkedRemove = true;
             }
         });
         stage.addActor(image);

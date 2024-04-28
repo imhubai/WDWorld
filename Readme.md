@@ -16,3 +16,7 @@ vis-ui(https://github.com/kotcrab/vis-ui)
 nv-websocket-client(https://github.com/TakahikoKawasaki/nv-websocket-client)
 
 gdx-websockets(https://github.com/MrStahlfelge/gdx-websockets)
+
+Medoo(https://github.com/catfan/Medoo)
+
+Phpmyadmin(https://github.com/phpmyadmin/phpmyadmin)

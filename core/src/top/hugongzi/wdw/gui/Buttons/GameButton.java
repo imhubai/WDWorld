@@ -8,6 +8,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import top.hugongzi.wdw.GameEntry;
 
+/**
+ * 快速实例化按钮
+ * @author Hubai
+ */
 public class GameButton {
     public static Texture upTexture = new Texture(Gdx.files.internal("ButtonSkins/btn_default_up.png"));
     public static Texture downTexture = new Texture(Gdx.files.internal("ButtonSkins/btn_default_down.png"));

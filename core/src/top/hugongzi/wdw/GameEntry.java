@@ -5,8 +5,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import top.hugongzi.wdw.fcore.Log;
 import top.hugongzi.wdw.gui.Screens.AbstractScreen;
 import top.hugongzi.wdw.gui.Screens.LoginScreen;
@@ -17,7 +21,7 @@ import java.util.List;
 import java.util.Stack;
 
 /**
- * 游戏入口
+ * 游戏入口,全局事件柄,全局绘制
  *
  * @author Hubai
  * @version 1.0
@@ -25,7 +29,8 @@ import java.util.Stack;
 public class GameEntry implements ApplicationListener, InputProcessor {
     public static String CLASSNAME = GameEntry.class.getSimpleName();
     public static String GAMENAME = "wdw";
-    public static String GAMEVERSION = "t0.2.4";
+    public static String GAMEVERSION = "t0.2.5";
+    public static int GAMEWIDTH, GAMEHEIGHT;
 
     public static SpriteBatch batch;
     public static Input input;
@@ -36,6 +41,7 @@ public class GameEntry implements ApplicationListener, InputProcessor {
 
     /**
      * 在待渲染列表中加入新屏幕，等待下一帧渲染
+     *
      * @param screen 加入渲染列表的屏幕
      */
     public static void addScreen(AbstractScreen screen) {
@@ -44,7 +50,23 @@ public class GameEntry implements ApplicationListener, InputProcessor {
         Log.i("Screens << " + screen);
     }
 
+    /**
+     * 为继承绝对屏幕的屏幕提供初始化stage
+     */
+    public static Stage stage() {
+        return new Stage(viewport(), GameEntry.batch);
+    }
+
+    /**
+     * 为继承绝对屏幕的屏幕提供初始化viewport
+     */
+    public static ScalingViewport viewport() {
+        /*return new ScalingViewport(Game.setting.fitScaling ? Scaling.fit : Scaling.stretch, Game.STAGE_WIDTH, Game.STAGE_HEIGHT, new OrthographicCamera());*/
+        return new ScalingViewport(Scaling.fit, GAMEWIDTH, GAMEHEIGHT, new OrthographicCamera());
+    }
+
     public void create() {
+        //wdw,启动!
         Log.i(CLASSNAME + " -> create()");
         Log.i(" _ _ _ ____  _ _ _         _   _");
         Log.i("| | | |    \\| | | |___ ___| |_| |");
@@ -54,7 +76,11 @@ public class GameEntry implements ApplicationListener, InputProcessor {
 
         batch = new SpriteBatch();
         font = new Font().getFont();
+        GAMEWIDTH = Gdx.graphics.getWidth();
+        GAMEHEIGHT = Gdx.graphics.getHeight();
+        Log.i("GAME WIDTH:" + GAMEWIDTH + " GAME HEIGHT:" + GAMEHEIGHT);
         Gdx.input.setInputProcessor(this);
+
         LoginScreen loginScreen = new LoginScreen();
         loginScreen.create();
         addScreen(loginScreen);
@@ -65,10 +91,10 @@ public class GameEntry implements ApplicationListener, InputProcessor {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         //如果屏幕被标记为IsMarkedRemove，在当前屏幕列表中删除
         screens.removeIf(AbstractScreen::removeable);
-        for (int i = 0; i < screens.size(); ++i) {
-            if (screens.get(i).removeable()) {
-                screens.get(i).remove();
-                screens.remove(i);
+        for (AbstractScreen s : screens) {
+            if (s.removeable()) {
+                s.remove();
+                screens.remove(s);
             }
         }
         screens.addAll(InsertScreens);
