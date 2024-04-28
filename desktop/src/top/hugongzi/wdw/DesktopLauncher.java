@@ -23,9 +23,10 @@ public class DesktopLauncher {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setForegroundFPS(0);
         config.setIdleFPS(0);
-        config.setWindowedMode(1270, 720);
+        config.setWindowedMode(1280, 720);
         config.useVsync(true);
         config.setTitle("WDWorld");
+
         //Hdpi
         config.setHdpiMode(HdpiMode.Pixels);
         config.setInitialVisible(true);
