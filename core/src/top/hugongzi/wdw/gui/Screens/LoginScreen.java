@@ -15,7 +15,6 @@ public class LoginScreen extends AbstractScreen {
     @Override
     public void create() {
         stage = Game.stage();
-        Gdx.input.setInputProcessor(stage);
         Texture upTexture = new Texture(Gdx.files.internal("ButtonSkins/btn_default_up.png"));
         Texture downTexture = new Texture(Gdx.files.internal("ButtonSkins/btn_default_down.png"));
         Button.ButtonStyle buttonStyle = new Button.ButtonStyle();
@@ -28,7 +27,7 @@ public class LoginScreen extends AbstractScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Log.i("Button clicked");
-                isMarkedRemove = true;
+                //isMarkedRemove = true;
                 SplashScreen splashScreen=new SplashScreen();
                 splashScreen.create();
                 GameEntry.addScreen(splashScreen);
@@ -45,6 +44,11 @@ public class LoginScreen extends AbstractScreen {
 
     @Override
     public void act() {
+
+    }
+
+    @Override
+    public void dispose() {
 
     }
 }

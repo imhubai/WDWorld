@@ -3,6 +3,7 @@ package top.hugongzi.wdw;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -21,7 +22,7 @@ import java.util.Stack;
  * @author Hubai
  * @version 1.0
  */
-public class GameEntry implements ApplicationListener {
+public class GameEntry implements ApplicationListener, InputProcessor {
     public static String CLASSNAME = GameEntry.class.getSimpleName();
     public static String GAMENAME = "wdw";
     public static String GAMEVERSION = "t0.2.2";
@@ -49,20 +50,28 @@ public class GameEntry implements ApplicationListener {
 
         batch = new SpriteBatch();
         font = new Font().getFont();
+        Gdx.input.setInputProcessor(this);
         LoginScreen loginScreen = new LoginScreen();
         loginScreen.create();
         addScreen(loginScreen);
     }
 
     public void render() {
-        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         screens.removeIf(AbstractScreen::removeable);
+        for (int i = 0; i < screens.size(); ++i) {
+            if (screens.get(i).removeable()) {
+                screens.get(i).remove();
+                screens.remove(i);
+            }
+        }
         screens.addAll(InsertScreens);
         InsertScreens.clear();
-        for (int i = screens.size() - 1; i >= 0; --i) {
-            AbstractScreen s = screens.elementAt(i);
-            Log.d("screen draw << "+s);
+
+        for (int i = 0; i < screens.size(); ++i) {
+            AbstractScreen s = screens.get(i);
+            Log.d("screen draw << " + s);
             s.act();
             s.draw();
         }
@@ -83,4 +92,50 @@ public class GameEntry implements ApplicationListener {
         batch.dispose();
         font.dispose();
     }
+
+    @Override
+    public boolean keyDown(int i) {
+        return screens.peek().keyDown(i);
+    }
+
+    @Override
+    public boolean keyUp(int i) {
+        return screens.peek().keyUp(i);
+    }
+
+    @Override
+    public boolean keyTyped(char c) {
+        return screens.peek().keyTyped(c);
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return screens.peek().touchDown(screenX, screenY, pointer, button);
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return screens.peek().touchUp(screenX, screenY, pointer, button);
+    }
+
+    @Override
+    public boolean touchCancelled(int i, int i1, int i2, int i3) {
+        return screens.peek().touchCancelled(i, i1, i2, i3);
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return screens.peek().touchDragged(screenX, screenY, pointer);
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return screens.peek().mouseMoved(screenX, screenY);
+    }
+
+    @Override
+    public boolean scrolled(float v, float v1) {
+        return screens.peek().scrolled(v, v1);
+    }
+
 }
