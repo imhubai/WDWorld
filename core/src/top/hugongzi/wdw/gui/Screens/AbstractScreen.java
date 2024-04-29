@@ -3,6 +3,7 @@ package top.hugongzi.wdw.gui.Screens;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
+import top.hugongzi.wdw.fcore.Log;
 
 /**
  * 所有屏幕的继承类
@@ -11,7 +12,7 @@ import com.badlogic.gdx.utils.Disposable;
  * @author Hubai
  */
 public abstract class AbstractScreen implements InputProcessor, Disposable {
-
+    public static String CLASSNAME = AbstractScreen.class.getSimpleName();
     public Stage stage;
     /**
      * 标记当前屏幕是否即将移除
@@ -36,6 +37,7 @@ public abstract class AbstractScreen implements InputProcessor, Disposable {
 
     public void remove() {
         isMarkedRemove = true;
+        Log.i(CLASSNAME+" -> remove()");
     }
 
     @Override

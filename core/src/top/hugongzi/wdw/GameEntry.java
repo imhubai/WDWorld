@@ -29,7 +29,7 @@ import java.util.Stack;
 public class GameEntry implements ApplicationListener, InputProcessor {
     public static String CLASSNAME = GameEntry.class.getSimpleName();
     public static String GAMENAME = "wdw";
-    public static String GAMEVERSION = "t0.2.5";
+    public static String GAMEVERSION = "t0.2.6";
     public static int GAMEWIDTH, GAMEHEIGHT;
 
     public static SpriteBatch batch;
@@ -91,17 +91,10 @@ public class GameEntry implements ApplicationListener, InputProcessor {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         //如果屏幕被标记为IsMarkedRemove，在当前屏幕列表中删除
         screens.removeIf(AbstractScreen::removeable);
-        for (AbstractScreen s : screens) {
-            if (s.removeable()) {
-                s.remove();
-                screens.remove(s);
-            }
-        }
         screens.addAll(InsertScreens);
         InsertScreens.clear();
 
-        for (int i = 0; i < screens.size(); ++i) {
-            AbstractScreen s = screens.get(i);
+        for (AbstractScreen s : screens) {
             Log.d("screen draw << " + s);
             s.act();
             s.draw();

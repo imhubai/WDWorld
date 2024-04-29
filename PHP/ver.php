@@ -1,4 +1,4 @@
-<?php 
-$ver = '1.0';
+<?php
+global $ver;
+require 'sql.php';
 echo $ver;
- ?>

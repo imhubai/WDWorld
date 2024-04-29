@@ -14,10 +14,8 @@ public class SplashScreen extends AbstractScreen {
     public void create() {
         stage = GameEntry.stage();
         Texture texture = new Texture(Gdx.files.internal("Images/bg_gal.png"));
-
         Image image = new Image(new TextureRegion(texture));
-
-        image.setPosition(200, 200);
+        image.setPosition(500, 500);
         image.setScale(1.0F, 1.0F);
         image.setRotation(0);
         image.addListener(new ClickListener() {
