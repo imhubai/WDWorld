@@ -17,6 +17,7 @@ import top.hugongzi.wdw.gui.Screens.LoginScreen;
 import top.hugongzi.wdw.gui.Text.Font;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Stack;
 
@@ -34,7 +35,7 @@ public class GameEntry implements ApplicationListener, InputProcessor {
 
     public static SpriteBatch batch;
     public static Input input;
-    public static BitmapFont font;
+    public static Hashtable<String,BitmapFont> font;
 
     private static Stack<AbstractScreen> screens = new Stack<>();
     private static List<AbstractScreen> InsertScreens = new ArrayList<>();
@@ -114,7 +115,6 @@ public class GameEntry implements ApplicationListener, InputProcessor {
 
     public void dispose() {
         batch.dispose();
-        font.dispose();
     }
 
     @Override
