@@ -30,12 +30,12 @@ import java.util.Stack;
 public class GameEntry implements ApplicationListener, InputProcessor {
     public static String CLASSNAME = GameEntry.class.getSimpleName();
     public static String GAMENAME = "wdw";
-    public static String GAMEVERSION = "t0.2.7";
+    public static String GAMEVERSION = "t0.2.8";
     public static int GAMEWIDTH, GAMEHEIGHT;
 
     public static SpriteBatch batch;
     public static Input input;
-    public static Hashtable<String,BitmapFont> font;
+    public static Hashtable<String, BitmapFont> font;
 
     private static Stack<AbstractScreen> screens = new Stack<>();
     private static List<AbstractScreen> InsertScreens = new ArrayList<>();
