@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ObjectMap;
@@ -17,6 +18,7 @@ import top.hugongzi.wdw.fcore.Log;
 import top.hugongzi.wdw.gui.Buttons.GameGUI;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -29,15 +31,20 @@ public class LoginScreen extends AbstractScreen {
     public static String CLASSNAME = LoginScreen.class.getSimpleName();
     ObjectMap<String, Group> page = new ObjectMap<>();
     Group root;
-    Label msglabel;
+    Label msglabel, label_server_title;
     String version = "1.0";
     String serverurl = "http://127.0.0.1/wdwgame/";
-    String username, password;
+    Hashtable<String, String> gameurl = new Hashtable<>();
+    String username, password, name, email;
+    int basewidth, baseheight;
+    List<TextButton> serverbtnlist = new ArrayList<>();
 
     @Override
     public void create() {
         Log.i(CLASSNAME + " -> create()");
         stage = GameEntry.stage();
+        basewidth = GameEntry.GAMEWIDTH / 3 * 2;
+        baseheight = 0;
         page.put("login", new Group());
         page.put("register", new Group());
         page.put("change", new Group());
@@ -47,23 +54,22 @@ public class LoginScreen extends AbstractScreen {
         root.setVisible(true);
         for (ObjectMap.Entry<String, Group> entry : page.entries()) {
             fun_page(entry.key);
+            entry.value.setPosition(basewidth, baseheight);
             root.addActor(entry.value);
         }
-        stage.setRoot(root);
+        stage.addActor(root);
     }
 
     public void fun_page(String pagename) {
         Log.i(CLASSNAME + " -> funpage() => " + pagename);
-        int basewidth = GameEntry.GAMEWIDTH / 3 * 2;
-        int baseheight = 0;
         switch (pagename) {
             case "msg":
                 page.get(pagename).setVisible(false);
                 List<Actor> list_msg = new ArrayList<>();
-                msglabel = GameGUI.label_Default("", basewidth - 300, baseheight + 400);
+                msglabel = GameGUI.label_Default("", GameEntry.GAMEWIDTH/2-basewidth, GameEntry.GAMEHEIGHT / 2);
                 list_msg.add(msglabel);
 
-                Button btn_msg_ok = GameGUI.TextBtn_Default("OK", basewidth - 300, baseheight + 300);
+                Button btn_msg_ok = GameGUI.TextBtn_Default("OK", GameEntry.GAMEWIDTH/2-basewidth, GameEntry.GAMEHEIGHT / 2-100);
                 btn_msg_ok.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -77,43 +83,39 @@ public class LoginScreen extends AbstractScreen {
                 page.get(pagename).setVisible(true);
                 List<Actor> list_login = new ArrayList<>();
 
-                Label label_login_title = GameGUI.label_Big("用户登入", basewidth + 10, baseheight + 360);
+                Label label_login_title = GameGUI.label_Big("用户登入", 10, 360);
                 list_login.add(label_login_title);
 
-                TextField tf_login_password = GameGUI.Tf_Default("", 320, 48, basewidth + 80, baseheight + 200);
+                TextField tf_login_password = GameGUI.Tf_Default("", 320, 48, 80, 200);
                 tf_login_password.setPasswordMode(true);
                 tf_login_password.setPasswordCharacter((char) 61440);
                 tf_login_password.setMessageText("请输入密码");
                 list_login.add(tf_login_password);
 
-                TextField tf_login_username = GameGUI.Tf_Default("", 320, 48, basewidth + 80, baseheight + 280);
+                TextField tf_login_username = GameGUI.Tf_Default("", 320, 48, 80, 280);
                 tf_login_username.setMessageText("请输入账号");
                 list_login.add(tf_login_username);
 
-                Label label_login_username = GameGUI.label_Default("账号", basewidth + 10, baseheight + 290);
+                Label label_login_username = GameGUI.label_Default("账号", 10, 290);
                 list_login.add(label_login_username);
 
-                Label label_login_password = GameGUI.label_Default("密码", basewidth + 10, baseheight + 210);
+                Label label_login_password = GameGUI.label_Default("密码", 10, 210);
                 list_login.add(label_login_password);
 
-                Button btn_login_login = GameGUI.TextBtn_Default("登录", basewidth + 10, baseheight + 100);
+                Button btn_login_login = GameGUI.TextBtn_Default("登录", 10, 100);
                 btn_login_login.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         String login_username = tf_login_username.getText();
                         String login_password = tf_login_password.getText();
-                        String[] res = post("login.php?username=" + login_username + "&" + "password=" + login_password + "&" + "version=" + version);
-                        if (res[0].equals("fail")) {
-                            msgwindow(res[1]);
-                        } else {
-                            page.get("server").setVisible(true);
-                            page.get(pagename).setVisible(false);
-                        }
+                        username = login_username;
+                        password = login_password;
+                        post("login.php?username=" + login_username + "&" + "password=" + login_password + "&" + "version=" + version, "login");
                     }
                 });
                 list_login.add(btn_login_login);
 
-                Button btn_login_register = GameGUI.TextBtn_Default("注册", basewidth + 220, baseheight + 100);
+                Button btn_login_register = GameGUI.TextBtn_Default("注册", 220, 100);
                 btn_login_register.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -130,49 +132,49 @@ public class LoginScreen extends AbstractScreen {
                 page.get(pagename).setVisible(false);
                 List<Actor> list_register = new ArrayList<>();
 
-                Label label_register_title = GameGUI.label_Big("用户注册", basewidth + 10, baseheight + 620);
+                Label label_register_title = GameGUI.label_Big("用户注册", 10, 620);
                 list_register.add(label_register_title);
 
-                TextField tf_register_name = GameGUI.Tf_Default("", 320, 48, basewidth + 80, baseheight + 500);
+                TextField tf_register_name = GameGUI.Tf_Default("", 320, 48, 80, 500);
                 tf_register_name.setMessageText("请输入昵称(无法修改!)");
                 list_register.add(tf_register_name);
 
-                Label label_register_name = GameGUI.label_Default("昵称", basewidth + 10, baseheight + 510);
+                Label label_register_name = GameGUI.label_Default("昵称", 10, 510);
                 list_register.add(label_register_name);
 
-                TextField tf_register_username = GameGUI.Tf_Default("", 320, 48, basewidth + 80, baseheight + 420);
+                TextField tf_register_username = GameGUI.Tf_Default("", 320, 48, 80, 420);
                 tf_register_username.setMessageText("小写字母开头,4-18个字节");
                 list_register.add(tf_register_username);
 
-                Label label_register_username = GameGUI.label_Default("账号", basewidth + 10, baseheight + 430);
+                Label label_register_username = GameGUI.label_Default("账号", 10, 430);
                 list_register.add(label_register_username);
 
-                TextField tf_register_password = GameGUI.Tf_Default("", 320, 48, basewidth + 80, baseheight + 340);
+                TextField tf_register_password = GameGUI.Tf_Default("", 320, 48, 80, 340);
                 tf_register_password.setPasswordMode(true);
                 tf_register_password.setPasswordCharacter((char) 61440);
                 tf_register_password.setMessageText("请输入密码");
                 list_register.add(tf_register_password);
 
-                Label label_register_password = GameGUI.label_Default("密码", basewidth + 10, baseheight + 350);
+                Label label_register_password = GameGUI.label_Default("密码", 10, 350);
                 list_register.add(label_register_password);
 
-                TextField tf_register_password2 = GameGUI.Tf_Default("", 320, 48, basewidth + 80, baseheight + 260);
+                TextField tf_register_password2 = GameGUI.Tf_Default("", 320, 48, 80, 260);
                 tf_register_password2.setPasswordMode(true);
                 tf_register_password2.setPasswordCharacter((char) 61440);
                 tf_register_password2.setMessageText("请再输入一次密码");
                 list_register.add(tf_register_password2);
 
-                Label label_register_password2 = GameGUI.label_Default("验证", basewidth + 10, baseheight + 270);
+                Label label_register_password2 = GameGUI.label_Default("验证", 10, 270);
                 list_register.add(label_register_password2);
 
-                TextField tf_register_email = GameGUI.Tf_Default("", 320, 48, basewidth + 80, baseheight + 180);
+                TextField tf_register_email = GameGUI.Tf_Default("", 320, 48, 80, 180);
                 tf_register_email.setMessageText("请输入邮箱");
                 list_register.add(tf_register_email);
 
-                Label label_register_email = GameGUI.label_Default("邮箱", basewidth + 10, baseheight + 190);
+                Label label_register_email = GameGUI.label_Default("邮箱", 10, 190);
                 list_register.add(label_register_email);
 
-                Label btn_register_back = GameGUI.label_Default("返回", basewidth + 80, baseheight + 90);
+                Label btn_register_back = GameGUI.label_Default("返回", 80, 90);
                 btn_register_back.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -182,7 +184,7 @@ public class LoginScreen extends AbstractScreen {
                 });
                 list_register.add(btn_register_back);
 
-                Button btn_register = GameGUI.TextBtn_Default("注册", basewidth + 220, baseheight + 80);
+                Button btn_register = GameGUI.TextBtn_Default("注册", 220, 80);
                 btn_register.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -194,14 +196,7 @@ public class LoginScreen extends AbstractScreen {
                         if (!register_password.equals(register_password2)) {
                             msgwindow("密码不一致!");
                         } else {
-                            String[] res = post("reg.php?username=" + register_username + "&" + "name=" + register_name + "&" + "password=" + register_password + "&" + "email=" + register_email + "&" + "version=" + version);
-                            if (res[0].equals("fail")) {
-                                msgwindow(res[1]);
-                            } else {
-                                msgwindow(res[1]);
-                                page.get("login").setVisible(true);
-                                page.get(pagename).setVisible(false);
-                            }
+                            post("reg.php?username=" + register_username + "&" + "name=" + register_name + "&" + "password=" + register_password + "&" + "email=" + register_email + "&" + "version=" + version, "reg");
                         }
                     }
                 });
@@ -213,7 +208,35 @@ public class LoginScreen extends AbstractScreen {
             case "server":
                 page.get(pagename).setVisible(false);
                 List<Actor> list_server = new ArrayList<>();
+                label_server_title = GameGUI.label_Big("welcome", 10, 620);
+                list_server.add(label_server_title);
+                Label label_server_change = GameGUI.label_Default("修改信息", 10, 580);
+                label_server_change.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        page.get(pagename).setVisible(false);
+                        page.get("change").setVisible(true);
+                    }
+                });
+                list_server.add(label_server_change);
 
+                Label label_server_off = GameGUI.label_Default("退出登录", 150, 580);
+
+                label_server_off.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        page.get(pagename).setVisible(false);
+                        page.get("login").setVisible(true);
+                    }
+                });
+                list_server.add(label_server_off);
+
+                Label label_server_listtitle = GameGUI.label_Default("服务器列表", 10, 520);
+                list_server.add(label_server_listtitle);
+                serverbtnlist.add(GameGUI.TextBtn_Default("", 10, 500 - 50));
+                serverbtnlist.add(GameGUI.TextBtn_Default("", 10, 500 - 110));
+                serverbtnlist.add(GameGUI.TextBtn_Default("", 10, 500 - 170));
+                serverbtnlist.add(GameGUI.TextBtn_Default("", 10, 500 - 230));
                 for (Actor a : list_server) page.get(pagename).addActor(a);
                 return;
         }
@@ -235,19 +258,32 @@ public class LoginScreen extends AbstractScreen {
 
     }
 
-    public String[] post(String cmd) {
+    public void post(String cmd, String operation) {
         HttpRequestBuilder requestBuilder = new HttpRequestBuilder();
         Net.HttpRequest httpRequest = requestBuilder.newRequest().method(Net.HttpMethods.GET).url(serverurl + cmd).build();
-        final String[] back = {"", ""};
+        //httpRequest.setTimeOut(3);
+        Log.d(CLASSNAME + " -> post()");
         Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
             @Override
             public void handleHttpResponse(Net.HttpResponse httpResponse) {
                 HttpStatus httpStatus = httpResponse.getStatus();
                 if (httpStatus.getStatusCode() == 200) {
                     String[] temp = httpResponse.getResultAsString().split("\\|");
-                    back[0] = temp[0];
-                    back[1] = temp[1];
-                    Log.i(CLASSNAME + " -> post() => " + httpStatus.getStatusCode());
+                    Log.d(CLASSNAME + " -> post() => " + temp[0]);
+                    switch (operation) {
+                        case "login":
+                            funlogin(temp);
+                            break;
+                        case "reg":
+                            funregister(temp);
+                            break;
+                        case "server":
+                            fungetserver(temp);
+                            break;
+                        case "getinfo":
+                            fungetinfo(temp);
+                            break;
+                    }
                 }
             }
 
@@ -262,11 +298,63 @@ public class LoginScreen extends AbstractScreen {
             }
 
         });
-        return back;
+    }
+
+    private void fungetinfo(String[] res) {
+        if (res[0].equals("success")) {
+            String[] obj = res[1].split("&");
+            name = obj[0];
+            email = obj[2];
+            label_server_title.setText("欢迎你," + name + "!");
+        } else {
+            msgwindow(res[1]);
+        }
     }
 
     public void msgwindow(String msg) {
         msglabel.setText(msg);
         page.get("msg").setVisible(true);
+    }
+
+    public void funlogin(String[] res) {
+        if (res[0].equals("success")) {
+            page.get("server").setVisible(true);
+            page.get("login").setVisible(false);
+            post("server.php?username=" + username + "&" + "password=" + password, "server");
+        } else {
+            msgwindow(res[1]);
+        }
+    }
+
+    public void funregister(String[] res) {
+        if (res[0].equals("success")) {
+            msgwindow(res[1]);
+            page.get("login").setVisible(true);
+            page.get("register").setVisible(false);
+        } else {
+            msgwindow(res[1]);
+        }
+    }
+
+    public void fungetserver(String[] res) {
+        if (res[0].equals("success")) {
+            String[] temp = res[1].split("#");
+            for (int i = 0; i < (Math.min(temp.length, 4)); ++i) {
+                String[] obj = temp[i].split("&");
+                gameurl.put(obj[0], obj[1]);
+                TextButton btn = serverbtnlist.get(i);
+                btn.setText(obj[0]);
+                btn.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        Log.i(btn.getText().toString() + "clicked!");
+                    }
+                });
+                page.get("server").addActor(btn);
+            }
+            post("getuserinfo.php?username=" + username + "&" + "password=" + password + "&" + "version=" + version, "getinfo");
+        } else {
+            msgwindow(res[1]);
+        }
     }
 }

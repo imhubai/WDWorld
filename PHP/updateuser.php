@@ -25,7 +25,7 @@ if (isset($_GET['newpwd'])) {
     $newemail = $_GET['newemail'];
     if (empty($newemail)) die('邮箱不能为空');
     if (!preg_match("/^[a-z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[-_a-z0-9]+\.)*[a-z0-9][-a-z0-9]{0,62}\.(?:[a-z]{2}\.)?[a-z]{2,}$/i", $newemail)) {
-        die('邮箱地址格式错误');
+        //die('邮箱地址格式错误');
     }
     $res = $database->update('users', ['email' => $newemail], ['name' => $username]);
     if ($res) echo '邮箱绑定成功' . $newemail;

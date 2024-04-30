@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
 import top.hugongzi.wdw.fcore.Log;
 import top.hugongzi.wdw.gui.Screens.AbstractScreen;
+import top.hugongzi.wdw.gui.Screens.CrashScreen;
 import top.hugongzi.wdw.gui.Screens.LoginScreen;
 import top.hugongzi.wdw.gui.Text.Font;
 
@@ -30,7 +31,7 @@ import java.util.Stack;
 public class GameEntry implements ApplicationListener, InputProcessor {
     public static String CLASSNAME = GameEntry.class.getSimpleName();
     public static String GAMENAME = "wdw";
-    public static String GAMEVERSION = "t0.2.8";
+    public static String GAMEVERSION = "t0.2.9";
     public static int GAMEWIDTH, GAMEHEIGHT;
 
     public static SpriteBatch batch;
@@ -82,6 +83,7 @@ public class GameEntry implements ApplicationListener, InputProcessor {
         Log.i("GAME WIDTH:" + GAMEWIDTH + " GAME HEIGHT:" + GAMEHEIGHT);
         Gdx.input.setInputProcessor(this);
 
+        //初始化屏幕
         LoginScreen loginScreen = new LoginScreen();
         loginScreen.create();
         addScreen(loginScreen);
@@ -94,7 +96,13 @@ public class GameEntry implements ApplicationListener, InputProcessor {
         screens.removeIf(AbstractScreen::removeable);
         screens.addAll(InsertScreens);
         InsertScreens.clear();
-
+        //如果空栈,初始化一个崩溃界面
+        if(screens.empty()){
+            Log.e("CRASHED:Stack<AbstractScreen> has 0 screen to render()",new Throwable());
+            CrashScreen crashScreen=new CrashScreen();
+            crashScreen.create();
+            screens.push(crashScreen);
+        }
         for (AbstractScreen s : screens) {
             Log.d("screen draw << " + s);
             s.act();
