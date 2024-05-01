@@ -37,6 +37,7 @@ public abstract class AbstractScreen implements InputProcessor, Disposable {
 
     public void remove() {
         isMarkedRemove = true;
+        //this.dispose();
         Log.i(CLASSNAME + " -> remove()");
     }
 

@@ -30,10 +30,9 @@ public class DesktopLauncher {
         //Hdpi
         config.setHdpiMode(HdpiMode.Pixels);
         config.setInitialVisible(true);
-        config.setInitialBackgroundColor(Color.valueOf("#2e2e2e"));
+        config.setInitialBackgroundColor(Color.valueOf("#000000"));
         config.setWindowIcon("Icon/icon.png");
         config.setResizable(false);
-
         config.disableAudio(false);
 
         Gdx.files = new Lwjgl3Files();

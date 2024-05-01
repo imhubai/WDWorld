@@ -7,6 +7,7 @@ import com.badlogic.gdx.net.HttpStatus;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -51,25 +52,24 @@ public class LoginScreen extends AbstractScreen {
         page.put("server", new Group());
         page.put("msg", new Group());
         root = new Group();
-        root.setVisible(true);
         for (ObjectMap.Entry<String, Group> entry : page.entries()) {
             fun_page(entry.key);
             entry.value.setPosition(basewidth, baseheight);
             root.addActor(entry.value);
         }
+        root.setVisible(true);
         stage.addActor(root);
     }
 
     public void fun_page(String pagename) {
-        Log.i(CLASSNAME + " -> funpage() => " + pagename);
         switch (pagename) {
             case "msg":
                 page.get(pagename).setVisible(false);
                 List<Actor> list_msg = new ArrayList<>();
-                msglabel = GameGUI.label_Default("", GameEntry.GAMEWIDTH/2-basewidth, GameEntry.GAMEHEIGHT / 2);
+                msglabel = GameGUI.label_Default("", GameEntry.GAMEWIDTH / 2 - basewidth, GameEntry.GAMEHEIGHT / 2);
                 list_msg.add(msglabel);
 
-                Button btn_msg_ok = GameGUI.TextBtn_Default("OK", GameEntry.GAMEWIDTH/2-basewidth, GameEntry.GAMEHEIGHT / 2-100);
+                Button btn_msg_ok = GameGUI.TextBtn_Default("OK", GameEntry.GAMEWIDTH / 2 - basewidth, GameEntry.GAMEHEIGHT / 2 - 100);
                 btn_msg_ok.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -119,8 +119,7 @@ public class LoginScreen extends AbstractScreen {
                 btn_login_register.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        page.get("register").setVisible(true);
-                        page.get(pagename).setVisible(false);
+                        pageto(pagename, "register");
                     }
                 });
                 list_login.add(btn_login_register);
@@ -178,8 +177,7 @@ public class LoginScreen extends AbstractScreen {
                 btn_register_back.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        page.get("login").setVisible(true);
-                        page.get(pagename).setVisible(false);
+                        pageto(pagename, "login");
                     }
                 });
                 list_register.add(btn_register_back);
@@ -214,8 +212,7 @@ public class LoginScreen extends AbstractScreen {
                 label_server_change.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        page.get(pagename).setVisible(false);
-                        page.get("change").setVisible(true);
+                        pageto(pagename, "change");
                     }
                 });
                 list_server.add(label_server_change);
@@ -225,8 +222,7 @@ public class LoginScreen extends AbstractScreen {
                 label_server_off.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        page.get(pagename).setVisible(false);
-                        page.get("login").setVisible(true);
+                        pageto(pagename, "login");
                     }
                 });
                 list_server.add(label_server_off);
@@ -239,7 +235,68 @@ public class LoginScreen extends AbstractScreen {
                 serverbtnlist.add(GameGUI.TextBtn_Default("", 10, 500 - 230));
                 for (Actor a : list_server) page.get(pagename).addActor(a);
                 return;
+            case "change":
+                page.get(pagename).setVisible(false);
+                List<Actor> list_change = new ArrayList<>();
+
+                Label label_change_title = GameGUI.label_Big("更改信息", 10, 620);
+                list_change.add(label_change_title);
+
+                TextField tf_change_newpwd = GameGUI.Tf_Default("", 320, 48, 80, 500);
+                tf_change_newpwd.setMessageText("新密码(留空不修改)");
+                list_change.add(tf_change_newpwd);
+
+                Label label_change_newpwd = GameGUI.label_Default("新密码", 10, 510);
+                list_change.add(label_change_newpwd);
+
+                TextField tf_change_newemail = GameGUI.Tf_Default("", 320, 48, 80, 420);
+                tf_change_newemail.setMessageText("新邮箱(留空不修改)");
+                list_change.add(tf_change_newemail);
+
+                Label label_change_newemail = GameGUI.label_Default("新邮箱", 10, 430);
+                list_change.add(label_change_newemail);
+
+                Label btn_change_back = GameGUI.label_Default("返回", 80, 90);
+                btn_change_back.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        pageto(pagename, "login");
+                    }
+                });
+                list_change.add(btn_change_back);
+
+                Button btn_change = GameGUI.TextBtn_Default("提交", 220, 80);
+                btn_change.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        String newpwd = tf_change_newpwd.getText();
+                        String newemail = tf_change_newemail.getText();
+                        String cmd = "updateuser.php?username="+username+"&"+"password="+password+"&"+"version="+version;
+                        if (newpwd.isEmpty() && newemail.isEmpty()) {
+                            msgwindow("新密码或新邮箱不能为空");
+                            return;
+                        } else if (!newpwd.isEmpty()) {
+                            cmd+="&newpwd="+newpwd;
+                        }else {
+                            cmd+="&newemail="+newemail;
+                        }
+                        post(cmd,"change");
+                    }
+                });
+                list_change.add(btn_change);
+                for (Actor a : list_change) page.get(pagename).addActor(a);
+                return;
         }
+    }
+
+    private void pageto(String thispage, String pageto) {
+        Log.i(CLASSNAME + " -> " + thispage + " => " + pageto);
+        page.get(thispage).clearActions();
+        page.get(thispage).addAction(Actions.fadeOut(0.2f));
+        page.get(thispage).setVisible(false);
+        page.get(pageto).setVisible(true);
+        page.get(pageto).clearActions();
+        page.get(pageto).addAction(Actions.fadeIn(0.2f));
     }
 
     @Override
@@ -255,14 +312,14 @@ public class LoginScreen extends AbstractScreen {
 
     @Override
     public void dispose() {
-
+        //this.remove();
     }
 
     public void post(String cmd, String operation) {
         HttpRequestBuilder requestBuilder = new HttpRequestBuilder();
         Net.HttpRequest httpRequest = requestBuilder.newRequest().method(Net.HttpMethods.GET).url(serverurl + cmd).build();
         //httpRequest.setTimeOut(3);
-        Log.d(CLASSNAME + " -> post()");
+        Log.d(CLASSNAME + " -> post():"+operation);
         Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
             @Override
             public void handleHttpResponse(Net.HttpResponse httpResponse) {
@@ -283,6 +340,9 @@ public class LoginScreen extends AbstractScreen {
                         case "getinfo":
                             fungetinfo(temp);
                             break;
+                        case "change":
+                            funchange(temp);
+                            break;
                     }
                 }
             }
@@ -298,6 +358,15 @@ public class LoginScreen extends AbstractScreen {
             }
 
         });
+    }
+
+    private void funchange(String[] res) {
+        if (res[0].equals("success")) {
+            msgwindow(res[1]);
+            pageto("change","login");
+        } else {
+            msgwindow(res[1]);
+        }
     }
 
     private void fungetinfo(String[] res) {
@@ -318,8 +387,7 @@ public class LoginScreen extends AbstractScreen {
 
     public void funlogin(String[] res) {
         if (res[0].equals("success")) {
-            page.get("server").setVisible(true);
-            page.get("login").setVisible(false);
+            pageto("login", "server");
             post("server.php?username=" + username + "&" + "password=" + password, "server");
         } else {
             msgwindow(res[1]);
@@ -329,8 +397,7 @@ public class LoginScreen extends AbstractScreen {
     public void funregister(String[] res) {
         if (res[0].equals("success")) {
             msgwindow(res[1]);
-            page.get("login").setVisible(true);
-            page.get("register").setVisible(false);
+            pageto("register", "login");
         } else {
             msgwindow(res[1]);
         }
@@ -347,7 +414,7 @@ public class LoginScreen extends AbstractScreen {
                 btn.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        Log.i(btn.getText().toString() + "clicked!");
+                        startGame();
                     }
                 });
                 page.get("server").addActor(btn);
@@ -356,5 +423,13 @@ public class LoginScreen extends AbstractScreen {
         } else {
             msgwindow(res[1]);
         }
+    }
+
+    private void startGame() {
+        GameEntry.game = new MainGame();
+        GameEntry.game.create();
+        GameEntry.addScreen(GameEntry.game);
+        GameEntry.splashScreen.remove();
+        remove();
     }
 }

@@ -3,6 +3,7 @@ package top.hugongzi.wdw.gui.Text;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.utils.ArrayMap;
 import top.hugongzi.wdw.fcore.Log;
 import top.hugongzi.wdw.lazyfont.LazyBitmapFont;
 
@@ -14,7 +15,7 @@ import java.util.Hashtable;
  * @author Hubai
  */
 public class Font {
-    private final Hashtable<String, BitmapFont> map = new Hashtable<>();
+    private final ArrayMap<String, BitmapFont> map = new ArrayMap<>();
 
     public Font() {
         String fontPath = "Fonts/Cubic.ttf";
@@ -28,7 +29,7 @@ public class Font {
         map.put("cubic32", new LazyBitmapFont(freeTypeFontGenerator, 32));
     }
 
-    public Hashtable<String, BitmapFont> getFont() {
+    public ArrayMap<String, BitmapFont> getFont() {
         return map;
     }
 
