@@ -30,7 +30,7 @@ public class DesktopLauncher {
         //Hdpi
         config.setHdpiMode(HdpiMode.Pixels);
         config.setInitialVisible(true);
-        config.setInitialBackgroundColor(Color.valueOf("#000000"));
+        config.setInitialBackgroundColor(Color.valueOf("#1c1c1c"));
         config.setWindowIcon("Icon/icon.png");
         config.setResizable(false);
         config.disableAudio(false);

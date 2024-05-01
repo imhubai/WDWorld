@@ -40,10 +40,10 @@ public class Log {
      */
     public static void e(Object obj, Throwable error) {
         elogger.error(obj == null ? NullMsg : obj.toString(), error);
-        String text = obj == null ? NullMsg : obj.toString();
-        text += "\n";
-        text += "[#ff00ff]" + error.getLocalizedMessage() + "[]";
+        StringBuilder text = new StringBuilder(obj == null ? NullMsg : obj.toString());
+        text.append("\n");
+        text.append("[#ff00ff]").append(error.getLocalizedMessage()).append("[]");
         for (StackTraceElement ele : error.getStackTrace())
-            text += "\n\t[#fc2929]at " + ele.getClassName() + "." + ele.getMethodName() + ":[][#8493ff]" + ele.getLineNumber() + "[]";
+            text.append("\n\t[#fc2929]at ").append(ele.getClassName()).append(".").append(ele.getMethodName()).append(":[][#8493ff]").append(ele.getLineNumber()).append("[]");
     }
 }

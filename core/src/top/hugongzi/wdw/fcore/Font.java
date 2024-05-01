@@ -1,13 +1,10 @@
-package top.hugongzi.wdw.gui.Text;
+package top.hugongzi.wdw.fcore;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.utils.ArrayMap;
-import top.hugongzi.wdw.fcore.Log;
 import top.hugongzi.wdw.lazyfont.LazyBitmapFont;
-
-import java.util.Hashtable;
 
 /**
  * 字体加载

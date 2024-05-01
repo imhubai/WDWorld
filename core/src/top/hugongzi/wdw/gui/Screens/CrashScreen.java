@@ -10,7 +10,7 @@ public class CrashScreen extends AbstractScreen {
     @Override
     public void create() {
         stage = GameEntry.stage();
-        crashLabel = GameGUI.label_Big(" :(\n崩溃啦，所有屏幕都被销毁了，请检查业务逻辑", 0, 0);
+        crashLabel = GameGUI.label_Big(" :(\n崩溃啦，请检查业务逻辑", 0, 0);
         stage.addActor(crashLabel);
     }
 

@@ -1,16 +1,32 @@
 package top.hugongzi.wdw.gui.Screens;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.AlphaAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import top.hugongzi.wdw.GameEntry;
 
-public class SplashScreen extends AbstractScreen {
-    LoginScreen loginScreen;
+/**
+ * 开始屏幕
+ *
+ * @author Hubai
+ */
+public class SplashScreen extends AbstractScreen implements Screen {
     Texture texture;
     Image image;
+    float delta = 0;
+    /**
+     * game为游戏入口
+     */
+    Game game;
+
+    public SplashScreen(Game game) {
+        this.game = game;
+    }
 
     @Override
     public void create() {
@@ -19,10 +35,13 @@ public class SplashScreen extends AbstractScreen {
         image = new Image(new TextureRegion(texture));
         image.setPosition((float) GameEntry.GAMEWIDTH / 2 - (float) texture.getWidth() / 2, (float) GameEntry.GAMEHEIGHT / 2 - (float) texture.getHeight() / 2);
         stage.addActor(image);
-        image.addAction(Actions.fadeOut(1f));
-        loginScreen = new LoginScreen();
-        loginScreen.create();
-        GameEntry.addScreen(loginScreen);
+        image.getColor().a = 0F;
+        AlphaAction action = Actions.alpha(1F, 1F);
+        image.addAction(action);
+        GameEntry.loginScreen = new LoginScreen();
+        GameEntry.loginScreen.create();
+        GameEntry.overlapScreen = new OverlapScreen();
+        GameEntry.overlapScreen.create();
     }
 
     @Override
@@ -33,6 +52,44 @@ public class SplashScreen extends AbstractScreen {
 
     @Override
     public void act() {
+        render(delta++);
+    }
+
+    @Override
+    public void show() {
+    }
+
+    @Override
+    public void render(float v) {
+        if (v >= 100f && v < 170f) {
+            AlphaAction action2 = Actions.alpha(0F, 0.7F);
+            image.addAction(action2);
+        } else if (v >= 170f) {
+            GameEntry.addScreen(GameEntry.loginScreen);
+            GameEntry.addScreen(GameEntry.overlapScreen);
+            this.dispose();
+            remove();
+        }
+    }
+
+    @Override
+    public void resize(int i, int i1) {
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
+    }
+
+    @Override
+    public void hide() {
+
     }
 
     @Override

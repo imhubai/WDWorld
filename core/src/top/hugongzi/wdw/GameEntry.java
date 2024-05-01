@@ -1,6 +1,6 @@
 package top.hugongzi.wdw;
 
-import com.badlogic.gdx.ApplicationListener;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
@@ -11,11 +11,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
+import top.hugongzi.wdw.fcore.Font;
 import top.hugongzi.wdw.fcore.Log;
-import top.hugongzi.wdw.gui.Screens.AbstractScreen;
-import top.hugongzi.wdw.gui.Screens.CrashScreen;
-import top.hugongzi.wdw.gui.Screens.SplashScreen;
-import top.hugongzi.wdw.gui.Text.Font;
+import top.hugongzi.wdw.gui.Screens.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,16 +25,18 @@ import java.util.Stack;
  * @author Hubai
  * @version 1.0
  */
-public class GameEntry implements ApplicationListener, InputProcessor {
+public class GameEntry extends Game implements InputProcessor {
     public static String CLASSNAME = GameEntry.class.getSimpleName();
     public static String GAMENAME = "wdw";
-    public static String GAMEVERSION = "t0.2.9";
+    public static String GAMEVERSION = "t0.3.1";
     public static int GAMEWIDTH, GAMEHEIGHT;
 
     public static SpriteBatch batch;
     public static ArrayMap<String, BitmapFont> font;
-    public static AbstractScreen game;
+    public static AbstractScreen maingame;
+    public static LoginScreen loginScreen;
     public static SplashScreen splashScreen;
+    public static OverlapScreen overlapScreen;
 
     private static Stack<AbstractScreen> screens = new Stack<>();
     private static List<AbstractScreen> InsertScreens = new ArrayList<>();
@@ -84,7 +84,7 @@ public class GameEntry implements ApplicationListener, InputProcessor {
         Gdx.input.setInputProcessor(this);
 
         //初始化屏幕
-        splashScreen = new SplashScreen();
+        splashScreen = new SplashScreen(this);
         splashScreen.create();
         addScreen(splashScreen);
     }
@@ -96,6 +96,9 @@ public class GameEntry implements ApplicationListener, InputProcessor {
         prepareScreen();
     }
 
+    /**
+     * 屏幕栈操作,删除被标记的屏幕,添加已缓存的屏幕
+     */
     private void prepareScreen() {
         //如果屏幕被标记为IsMarkedRemove，在当前屏幕列表中删除
         screens.removeIf(AbstractScreen::removeable);
@@ -103,7 +106,7 @@ public class GameEntry implements ApplicationListener, InputProcessor {
         InsertScreens.clear();
         //如果空栈,初始化一个崩溃界面
         if (screens.empty()) {
-            Log.e("CRASHED:Stack<AbstractScreen> has 0 screen to render()", new Throwable());
+            Log.e("CRASHED:Stack has 0 screen to render()", new Throwable());
             CrashScreen crashScreen = new CrashScreen();
             crashScreen.create();
             screens.push(crashScreen);

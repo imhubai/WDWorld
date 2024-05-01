@@ -2,16 +2,16 @@ package top.hugongzi.wdw.gui.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.net.HttpRequestBuilder;
 import com.badlogic.gdx.net.HttpStatus;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.actions.AlphaAction;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ObjectMap;
 import top.hugongzi.wdw.GameEntry;
@@ -34,22 +34,33 @@ public class LoginScreen extends AbstractScreen {
     Group root;
     Label msglabel, label_server_title;
     String version = "1.0";
-    String serverurl = "http://127.0.0.1/wdwgame/";
+    String phpserverurl = "https://hugongzi.top/wdwgame/";
     Hashtable<String, String> gameurl = new Hashtable<>();
     String username, password, name, email;
-    int basewidth, baseheight;
+    int basewidth = GameEntry.GAMEWIDTH / 5 * 3, baseheight = 0;
     List<TextButton> serverbtnlist = new ArrayList<>();
+    boolean drawheroimg = true, singlegamelock =true;
 
     @Override
     public void create() {
         Log.i(CLASSNAME + " -> create()");
+        if (GameEntry.GAMEWIDTH <= 800) {
+            Log.e("Doesn't support 800*n or lower des.");
+            Gdx.graphics.setWindowedMode(1024, 720);
+            basewidth = 1024 / 4;
+            drawheroimg = false;
+        } else if (GameEntry.GAMEWIDTH <= 1024) {
+            basewidth = GameEntry.GAMEWIDTH / 5 * 3;
+            drawheroimg = false;
+        } else if (GameEntry.GAMEWIDTH >= 1920) {
+            basewidth = GameEntry.GAMEWIDTH / 4 * 3;
+        }
         stage = GameEntry.stage();
-        basewidth = GameEntry.GAMEWIDTH / 3 * 2;
-        baseheight = 0;
         page.put("login", new Group());
         page.put("register", new Group());
         page.put("change", new Group());
         page.put("server", new Group());
+        page.put("other", new Group());
         page.put("msg", new Group());
         root = new Group();
         for (ObjectMap.Entry<String, Group> entry : page.entries()) {
@@ -66,10 +77,10 @@ public class LoginScreen extends AbstractScreen {
             case "msg":
                 page.get(pagename).setVisible(false);
                 List<Actor> list_msg = new ArrayList<>();
-                msglabel = GameGUI.label_Default("", GameEntry.GAMEWIDTH / 2 - basewidth, GameEntry.GAMEHEIGHT / 2);
+                msglabel = GameGUI.label_Default("", GameEntry.GAMEWIDTH / 2 - basewidth - 100, GameEntry.GAMEHEIGHT / 2);
                 list_msg.add(msglabel);
 
-                Button btn_msg_ok = GameGUI.TextBtn_Default("OK", GameEntry.GAMEWIDTH / 2 - basewidth, GameEntry.GAMEHEIGHT / 2 - 100);
+                Button btn_msg_ok = GameGUI.TextBtn_Default("OK", GameEntry.GAMEWIDTH / 2 - basewidth - 100, GameEntry.GAMEHEIGHT / 2 - 100);
                 btn_msg_ok.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -77,7 +88,25 @@ public class LoginScreen extends AbstractScreen {
                     }
                 });
                 list_msg.add(btn_msg_ok);
+
                 for (Actor a : list_msg) page.get(pagename).addActor(a);
+                return;
+            case "other":
+                page.get(pagename).setVisible(true);
+                List<Actor> list_other = new ArrayList<>();
+                String verlabel_s = "ver:" + GameEntry.GAMEVERSION + " 测试版本 Visit www.hugongzi.top";
+                Label verLabel = GameGUI.label_Default(verlabel_s, 0, 0);
+                list_other.add(verLabel);
+
+                Texture hero = new Texture(Gdx.files.internal("Images/hero_index_login.png"));
+                Image image_hero = new Image(new TextureRegion(hero));
+                image_hero.setPosition((float) 10 - basewidth, 0);
+                image_hero.getColor().a=0;
+                AlphaAction action_alpha = Actions.alpha(1F, 0.7F);
+                image_hero.addAction(action_alpha);
+                if (drawheroimg) list_other.add(image_hero);
+
+                for (Actor a : list_other) page.get(pagename).addActor(a);
                 return;
             case "login":
                 page.get(pagename).setVisible(true);
@@ -260,7 +289,7 @@ public class LoginScreen extends AbstractScreen {
                 btn_change_back.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        pageto(pagename, "login");
+                        pageto(pagename, "server");
                     }
                 });
                 list_change.add(btn_change_back);
@@ -271,21 +300,20 @@ public class LoginScreen extends AbstractScreen {
                     public void clicked(InputEvent event, float x, float y) {
                         String newpwd = tf_change_newpwd.getText();
                         String newemail = tf_change_newemail.getText();
-                        String cmd = "updateuser.php?username="+username+"&"+"password="+password+"&"+"version="+version;
+                        String cmd = "updateuser.php?username=" + username + "&" + "password=" + password + "&" + "version=" + version;
                         if (newpwd.isEmpty() && newemail.isEmpty()) {
                             msgwindow("新密码或新邮箱不能为空");
                             return;
                         } else if (!newpwd.isEmpty()) {
-                            cmd+="&newpwd="+newpwd;
-                        }else {
-                            cmd+="&newemail="+newemail;
+                            cmd += "&newpwd=" + newpwd;
+                        } else {
+                            cmd += "&newemail=" + newemail;
                         }
-                        post(cmd,"change");
+                        post(cmd, "change");
                     }
                 });
                 list_change.add(btn_change);
                 for (Actor a : list_change) page.get(pagename).addActor(a);
-                return;
         }
     }
 
@@ -307,19 +335,24 @@ public class LoginScreen extends AbstractScreen {
 
     @Override
     public void act() {
-
     }
 
     @Override
     public void dispose() {
-        //this.remove();
+        root.remove();
     }
 
+    /**
+     * post执行php操作
+     *
+     * @param cmd       命令,在url的?之后
+     * @param operation 操作方式
+     */
     public void post(String cmd, String operation) {
         HttpRequestBuilder requestBuilder = new HttpRequestBuilder();
-        Net.HttpRequest httpRequest = requestBuilder.newRequest().method(Net.HttpMethods.GET).url(serverurl + cmd).build();
-        //httpRequest.setTimeOut(3);
-        Log.d(CLASSNAME + " -> post():"+operation);
+        Net.HttpRequest httpRequest = requestBuilder.newRequest().method(Net.HttpMethods.GET).url(phpserverurl + cmd).build();
+        httpRequest.setTimeOut(30000);
+        Log.d(CLASSNAME + " -> post():" + operation);
         Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
             @Override
             public void handleHttpResponse(Net.HttpResponse httpResponse) {
@@ -343,6 +376,8 @@ public class LoginScreen extends AbstractScreen {
                         case "change":
                             funchange(temp);
                             break;
+                        default:
+                            Log.e("Unexpected value: " + operation, new IllegalStateException());
                     }
                 }
             }
@@ -363,7 +398,7 @@ public class LoginScreen extends AbstractScreen {
     private void funchange(String[] res) {
         if (res[0].equals("success")) {
             msgwindow(res[1]);
-            pageto("change","login");
+            pageto("change", "server");
         } else {
             msgwindow(res[1]);
         }
@@ -380,6 +415,11 @@ public class LoginScreen extends AbstractScreen {
         }
     }
 
+    /**
+     * 提示框
+     *
+     * @param msg 消息
+     */
     public void msgwindow(String msg) {
         msglabel.setText(msg);
         page.get("msg").setVisible(true);
@@ -414,9 +454,14 @@ public class LoginScreen extends AbstractScreen {
                 btn.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        startGame();
+                        startGame(btn.getText().toString());
                     }
                 });
+                page.get("server").addActor(btn);
+            }
+            if (temp.length == 0) {
+                TextButton btn = serverbtnlist.get(0);
+                btn.setText("服务器维护中");
                 page.get("server").addActor(btn);
             }
             post("getuserinfo.php?username=" + username + "&" + "password=" + password + "&" + "version=" + version, "getinfo");
@@ -425,11 +470,11 @@ public class LoginScreen extends AbstractScreen {
         }
     }
 
-    private void startGame() {
-        GameEntry.game = new MainGame();
-        GameEntry.game.create();
-        GameEntry.addScreen(GameEntry.game);
-        GameEntry.splashScreen.remove();
-        remove();
+    private void startGame(String serverName) {
+        GameEntry.maingame = MainGame.getInstance(gameurl.get(serverName), serverName, phpserverurl);
+        if(singlegamelock){
+            GameEntry.addScreen(GameEntry.maingame);
+            singlegamelock =false;
+        }
     }
 }
