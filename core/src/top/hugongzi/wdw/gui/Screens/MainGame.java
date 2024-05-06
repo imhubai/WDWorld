@@ -1,8 +1,10 @@
 package top.hugongzi.wdw.gui.Screens;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import top.hugongzi.wdw.GameEntry;
 import top.hugongzi.wdw.fcore.GameMap;
@@ -12,12 +14,10 @@ public class MainGame extends AbstractScreen {
     private static final float CAMERA_SPEED = 200.0f;
     public static String CLASSNAME = LoginScreen.class.getSimpleName();
     private static volatile MainGame instance;
-    OrthogonalTiledMapRenderer orthogonalTiledMapRenderer;
     OrthographicCamera camera;
-    Vector2 dir;
-    TiledMap map;
     GameMap gameMap;
     private String serverAddress, serverName, phpserverurl;
+    private Vector2 direction;
 
     private MainGame(String serverAddress, String serverName, String phpserverurl) {
         this.serverAddress = serverAddress;
@@ -44,20 +44,55 @@ public class MainGame extends AbstractScreen {
     @Override
     public void create() {
         stage = GameEntry.stage();
-        gameMap = new GameMap("Maps/test/map003.tmx", stage);
+        gameMap = new GameMap("Maps/map003.tmx", stage);
         camera = (OrthographicCamera) stage.getCamera();
         camera.zoom = 0.5f;
+        direction = new Vector2();
     }
 
     @Override
     public void draw() {
-        updateCamera();
+        //updateCamera();
         gameMap.draw();
     }
 
     private void updateCamera() {
+        direction.set(0.0f, 0.0f);
 
+        int mouseX = Gdx.input.getX();
+        int mouseY = Gdx.input.getY();
+        int width = Gdx.graphics.getWidth();
+        int height = Gdx.graphics.getHeight();
+
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            direction.x = -1;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            direction.x = 1;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.UP)) {
+            direction.y = 1;
+        } else if (Gdx.input.isKeyPressed(Input.Keys.DOWN)) {
+            direction.y = -1;
+        }
+
+        direction.nor().scl(CAMERA_SPEED * Gdx.graphics.getDeltaTime());
+
+        camera.position.x += direction.x;
+        camera.position.y += direction.y;
+
+        TiledMapTileLayer layer = (TiledMapTileLayer) gameMap.getMap().getLayers().get(0);
+
+        float cameraMinX = stage.getViewport().getWorldWidth() * 0.5f;
+        float cameraMinY = stage.getViewport().getWorldHeight() * 0.5f;
+        float cameraMaxX = layer.getWidth() * layer.getTileWidth() - cameraMinX;
+        float cameraMaxY = layer.getHeight() * layer.getTileHeight() - cameraMinY;
+
+        camera.position.x = MathUtils.clamp(camera.position.x, cameraMinX, cameraMaxX);
+        camera.position.y = MathUtils.clamp(camera.position.y, cameraMinY, cameraMaxY);
+
+        camera.update();
     }
+
 
     @Override
     public void act() {

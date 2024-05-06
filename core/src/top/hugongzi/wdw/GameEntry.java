@@ -28,7 +28,7 @@ import java.util.Vector;
 public class GameEntry extends Game implements InputProcessor {
     public static String CLASSNAME = GameEntry.class.getSimpleName();
     public static String GAMENAME = "wdw";
-    public static String GAMEVERSION = "t0.3.2";
+    public static String GAMEVERSION = "t0.3.3";
     public static int GAMEWIDTH, GAMEHEIGHT;
 
     public static SpriteBatch batch;
