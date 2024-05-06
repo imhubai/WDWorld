@@ -19,6 +19,7 @@ import top.hugongzi.wdw.fcore.Log;
 import top.hugongzi.wdw.gui.Buttons.GameGUI;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -338,6 +339,36 @@ public class LoginScreen extends AbstractScreen {
     }
 
     @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void render(float v) {
+
+    }
+
+    @Override
+    public void resize(int i, int i1) {
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
+    }
+
+    @Override
+    public void hide() {
+
+    }
+
+    @Override
     public void dispose() {
         root.remove();
     }
@@ -350,7 +381,7 @@ public class LoginScreen extends AbstractScreen {
      */
     public void post(String cmd, String operation) {
         HttpRequestBuilder requestBuilder = new HttpRequestBuilder();
-        Net.HttpRequest httpRequest = requestBuilder.newRequest().method(Net.HttpMethods.GET).url(phpserverurl + cmd).build();
+        Net.HttpRequest httpRequest = requestBuilder.newRequest().method(Net.HttpMethods.POST).url(phpserverurl + cmd).build();
         httpRequest.setTimeOut(30000);
         Log.d(CLASSNAME + " -> post():" + operation);
         Gdx.net.sendHttpRequest(httpRequest, new Net.HttpResponseListener() {
@@ -474,6 +505,8 @@ public class LoginScreen extends AbstractScreen {
         GameEntry.maingame = MainGame.getInstance(gameurl.get(serverName), serverName, phpserverurl);
         if(singlegamelock){
             GameEntry.addScreen(GameEntry.maingame);
+            //Collections.reverse(GameEntry.screens);
+            //Log.i(GameEntry.screens);
             singlegamelock =false;
         }
     }

@@ -9,13 +9,14 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.AlphaAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import top.hugongzi.wdw.GameEntry;
+import top.hugongzi.wdw.fcore.Log;
 
 /**
  * 开始屏幕
  *
  * @author Hubai
  */
-public class SplashScreen extends AbstractScreen implements Screen {
+public class SplashScreen extends AbstractScreen {
     Texture texture;
     Image image;
     float delta = 0;
@@ -52,7 +53,8 @@ public class SplashScreen extends AbstractScreen implements Screen {
 
     @Override
     public void act() {
-        render(delta++);
+        render(delta+=Gdx.graphics.getDeltaTime());
+        Log.d("Splash time:"+delta);
     }
 
     @Override
@@ -61,10 +63,10 @@ public class SplashScreen extends AbstractScreen implements Screen {
 
     @Override
     public void render(float v) {
-        if (v >= 100f && v < 170f) {
+        if (v >= 2f && v < 4f) {
             AlphaAction action2 = Actions.alpha(0F, 0.7F);
             image.addAction(action2);
-        } else if (v >= 170f) {
+        } else if (v >= 4f) {
             GameEntry.addScreen(GameEntry.loginScreen);
             GameEntry.addScreen(GameEntry.overlapScreen);
             this.dispose();

@@ -1,6 +1,7 @@
 package top.hugongzi.wdw.gui.Screens;
 
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Disposable;
 import top.hugongzi.wdw.fcore.Log;
@@ -11,7 +12,7 @@ import top.hugongzi.wdw.fcore.Log;
  *
  * @author Hubai
  */
-public abstract class AbstractScreen implements InputProcessor, Disposable {
+public abstract class AbstractScreen implements InputProcessor, Disposable, Screen {
     public static String CLASSNAME = AbstractScreen.class.getSimpleName();
     public Stage stage;
     /**

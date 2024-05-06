@@ -17,7 +17,7 @@ import top.hugongzi.wdw.gui.Screens.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
+import java.util.Vector;
 
 /**
  * 游戏入口,全局事件柄,全局绘制
@@ -28,7 +28,7 @@ import java.util.Stack;
 public class GameEntry extends Game implements InputProcessor {
     public static String CLASSNAME = GameEntry.class.getSimpleName();
     public static String GAMENAME = "wdw";
-    public static String GAMEVERSION = "t0.3.1";
+    public static String GAMEVERSION = "t0.3.2";
     public static int GAMEWIDTH, GAMEHEIGHT;
 
     public static SpriteBatch batch;
@@ -38,7 +38,7 @@ public class GameEntry extends Game implements InputProcessor {
     public static SplashScreen splashScreen;
     public static OverlapScreen overlapScreen;
 
-    private static Stack<AbstractScreen> screens = new Stack<>();
+    public static Vector<AbstractScreen> screens = new Vector<>();
     private static List<AbstractScreen> InsertScreens = new ArrayList<>();
 
     /**
@@ -105,13 +105,13 @@ public class GameEntry extends Game implements InputProcessor {
         screens.addAll(InsertScreens);
         InsertScreens.clear();
         //如果空栈,初始化一个崩溃界面
-        if (screens.empty()) {
+        if (screens.isEmpty()) {
             Log.e("CRASHED:Stack has 0 screen to render()", new Throwable());
             CrashScreen crashScreen = new CrashScreen();
             crashScreen.create();
-            screens.push(crashScreen);
+            screens.add(crashScreen);
         }
-        for (AbstractScreen s : screens) {
+        for (AbstractScreen s:screens) {
             Log.d("screen draw << " + s);
             s.act();
             s.draw();
@@ -137,47 +137,47 @@ public class GameEntry extends Game implements InputProcessor {
 
     @Override
     public boolean keyDown(int i) {
-        return screens.peek().keyDown(i);
+        return screens.lastElement().keyDown(i);
     }
 
     @Override
     public boolean keyUp(int i) {
-        return screens.peek().keyUp(i);
+        return screens.lastElement().keyUp(i);
     }
 
     @Override
     public boolean keyTyped(char c) {
-        return screens.peek().keyTyped(c);
+        return screens.lastElement().keyTyped(c);
     }
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return screens.peek().touchDown(screenX, screenY, pointer, button);
+        return screens.lastElement().touchDown(screenX, screenY, pointer, button);
     }
 
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return screens.peek().touchUp(screenX, screenY, pointer, button);
+        return screens.lastElement().touchUp(screenX, screenY, pointer, button);
     }
 
     @Override
     public boolean touchCancelled(int i, int i1, int i2, int i3) {
-        return screens.peek().touchCancelled(i, i1, i2, i3);
+        return screens.lastElement().touchCancelled(i, i1, i2, i3);
     }
 
     @Override
     public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return screens.peek().touchDragged(screenX, screenY, pointer);
+        return screens.lastElement().touchDragged(screenX, screenY, pointer);
     }
 
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        return screens.peek().mouseMoved(screenX, screenY);
+        return screens.lastElement().mouseMoved(screenX, screenY);
     }
 
     @Override
     public boolean scrolled(float v, float v1) {
-        return screens.peek().scrolled(v, v1);
+        return screens.lastElement().scrolled(v, v1);
     }
 
 }

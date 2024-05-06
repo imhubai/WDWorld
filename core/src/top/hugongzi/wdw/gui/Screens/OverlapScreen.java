@@ -9,12 +9,13 @@ import top.hugongzi.wdw.gui.Buttons.GameGUI;
 public class OverlapScreen extends AbstractScreen {
     public static String CLASSNAME = LoginScreen.class.getSimpleName();
     Label info;
+    float delta;
 
     @Override
     public void create() {
         stage = GameEntry.stage();
         Group overlap = new Group();
-        info = GameGUI.label_Default("", 0,GameEntry.GAMEHEIGHT - 300);
+        info = GameGUI.label_Default("", 0, GameEntry.GAMEHEIGHT - 300);
         overlap.addActor(info);
         stage.addActor(overlap);
     }
@@ -26,13 +27,42 @@ public class OverlapScreen extends AbstractScreen {
 
     @Override
     public void act() {
-//        info.setText("FPS:" + Gdx.graphics.getFramesPerSecond() + "\n" +
-//                "Delta:" + Gdx.graphics.getDeltaTime() + "\n" +
-//                Gdx.graphics.getGLVersion().getDebugVersionString() + "\n" +
-//                "UncompressedMem:" + Gdx.app.getJavaHeap()/80000+" MB"+"\n");
-        info.setText("UncompressedMem:" + Gdx.app.getJavaHeap()/80000+" MB"+"\n");
+        delta += Gdx.graphics.getDeltaTime();
+        info.setText("FPS:" + Gdx.graphics.getFramesPerSecond() + "\n" +
+                "Delta:" + delta + "\n" +
+                "UncompressedMem:" + Gdx.app.getJavaHeap() / 80000 + " MB" + "\n");
         stage.act();
         stage.draw();
+    }
+
+    @Override
+    public void show() {
+
+    }
+
+    @Override
+    public void render(float v) {
+
+    }
+
+    @Override
+    public void resize(int i, int i1) {
+
+    }
+
+    @Override
+    public void pause() {
+
+    }
+
+    @Override
+    public void resume() {
+
+    }
+
+    @Override
+    public void hide() {
+
     }
 
     @Override
