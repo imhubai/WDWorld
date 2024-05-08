@@ -1,4 +1,4 @@
-package top.hugongzi.wdw.fcore;
+package top.hugongzi.wdw.core;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -17,8 +17,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.*;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-
-import java.util.Arrays;
 
 import static net.dermetfan.gdx.math.GeometryUtils.decompose;
 import static net.dermetfan.gdx.math.GeometryUtils.toPolygonArray;
@@ -50,6 +48,10 @@ public class GameMap {
     }
 
     public void parseMap(TiledMap map, World world) {
+        AddStaticObjectCollisions(map, world);
+    }
+
+    private void AddStaticObjectCollisions(TiledMap map, World world) {
         MapObjects collisions = map.getLayers().get("Collision").getObjects();
         for (int i = 0; i < collisions.getCount(); i++) {
             MapObject mapObject = collisions.get(i);
@@ -82,26 +84,17 @@ public class GameMap {
             } else if (mapObject instanceof PolygonMapObject) {
                 PolygonMapObject polygonMapObject = (PolygonMapObject) mapObject;
                 Polygon polygon = polygonMapObject.getPolygon();
-                if (polygon.getVertices().length < 9) {
-                    //Log.i(Arrays.toString(polygon.getVertices()));
+
+                float[][] polygonListfloat = decompose(polygon.getVertices());
+                Polygon[] polygonList = toPolygonArray(polygonListfloat);
+                PolygonShape polygonShape;
+                for (Polygon value : polygonList) {
                     BodyDef bodyDef = getBodyDef(polygon.getX(), polygon.getY());
                     Body body = world.createBody(bodyDef);
-                    PolygonShape polygonShape = new PolygonShape();
-                    polygonShape.set(polygon.getVertices());
+                    polygonShape = new PolygonShape();
+                    polygonShape.set(value.getVertices());
                     body.createFixture(polygonShape, 0.0f);
                     polygonShape.dispose();
-                } else {
-                    float[][] polygonListfloat = decompose(polygon.getVertices());
-                    Polygon[] polygonList = toPolygonArray(polygonListfloat);
-                    PolygonShape polygonShape;
-                    for (Polygon value : polygonList) {
-                        BodyDef bodyDef = getBodyDef(polygon.getX(), polygon.getY());
-                        Body body = world.createBody(bodyDef);
-                        polygonShape = new PolygonShape();
-                        polygonShape.set(value.getVertices());
-                        body.createFixture(polygonShape, 0.0f);
-                        polygonShape.dispose();
-                    }
                 }
             }
         }

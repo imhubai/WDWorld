@@ -1,4 +1,4 @@
-package top.hugongzi.wdw.fcore;
+package top.hugongzi.wdw.core;
 
 import com.badlogic.gdx.utils.Logger;
 import top.hugongzi.wdw.GameEntry;

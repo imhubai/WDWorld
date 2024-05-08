@@ -6,9 +6,17 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.net.Socket;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryonet.Client;
 import top.hugongzi.wdw.GameEntry;
-import top.hugongzi.wdw.fcore.GameMap;
-import top.hugongzi.wdw.fcore.Log;
+import top.hugongzi.wdw.core.GameMap;
+import top.hugongzi.wdw.core.Log;
+import top.hugongzi.wdw.data.*;
+import top.hugongzi.wdw.wdwServer.ClientRequest;
+import top.hugongzi.wdw.wdwServer.ServerResponse;
+
+import java.io.IOException;
 
 public class MainGame extends AbstractScreen {
     private static final float CAMERA_SPEED = 200.0f;
@@ -16,6 +24,7 @@ public class MainGame extends AbstractScreen {
     private static volatile MainGame instance;
     OrthographicCamera camera;
     GameMap gameMap;
+    Socket mainsocket;
     private String serverAddress, serverName, phpserverurl;
     private Vector2 direction;
 
@@ -44,15 +53,33 @@ public class MainGame extends AbstractScreen {
     @Override
     public void create() {
         stage = GameEntry.stage();
+        try {
+            tryConnect();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         gameMap = new GameMap("Maps/map003.tmx", stage);
         camera = (OrthographicCamera) stage.getCamera();
         camera.zoom = 0.5f;
-        direction = new Vector2();
+        //direction = new Vector2();
+    }
+
+    public void tryConnect() throws IOException {
+        String[] server = serverAddress.split(":");
+        Client client = new Client();
+        Kryo kryo = client.getKryo();
+        kryo.register(ClientRequest.class);
+        kryo.register(ServerResponse.class);
+        client.start();
+        client.connect(50000, server[0], Integer.parseInt(server[1]), Integer.parseInt(server[1])+1);
+
+        ClientRequest request = new ClientRequest();
+        request.text = "Here is the request";
+        client.sendTCP(request);
     }
 
     @Override
     public void draw() {
-        //updateCamera();
         gameMap.draw();
     }
 

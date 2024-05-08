@@ -1,4 +1,4 @@
-package top.hugongzi.wdw.fcore;
+package top.hugongzi.wdw.core;
 
 /**
  * 游戏内控制台

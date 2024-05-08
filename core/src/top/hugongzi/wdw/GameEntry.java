@@ -11,8 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.ScalingViewport;
-import top.hugongzi.wdw.fcore.Font;
-import top.hugongzi.wdw.fcore.Log;
+import top.hugongzi.wdw.core.Font;
+import top.hugongzi.wdw.core.Log;
 import top.hugongzi.wdw.gui.Screens.*;
 
 import java.util.ArrayList;
@@ -28,7 +28,7 @@ import java.util.Vector;
 public class GameEntry extends Game implements InputProcessor {
     public static String CLASSNAME = GameEntry.class.getSimpleName();
     public static String GAMENAME = "wdw";
-    public static String GAMEVERSION = "t0.3.3";
+    public static String GAMEVERSION = "t0.3.4";
     public static int GAMEWIDTH, GAMEHEIGHT;
 
     public static SpriteBatch batch;

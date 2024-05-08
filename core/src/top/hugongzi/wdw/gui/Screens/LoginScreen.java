@@ -15,11 +15,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ObjectMap;
 import top.hugongzi.wdw.GameEntry;
-import top.hugongzi.wdw.fcore.Log;
+import top.hugongzi.wdw.core.Log;
 import top.hugongzi.wdw.gui.Buttons.GameGUI;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 

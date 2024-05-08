@@ -1,4 +1,4 @@
-package top.hugongzi.wdw.fcore;
+package top.hugongzi.wdw.core;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 

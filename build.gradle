@@ -74,5 +74,6 @@ project(":core") {
         api "com.github.tommyettinger:jbump:1.0.1"
         api "com.esotericsoftware.spine:spine-libgdx:4.2.0"
         api "com.github.tommyettinger:libgdx-utils:0.13.7"
+        api "com.esotericsoftware:kryonet:2.22.0-RC1"
     }
 }

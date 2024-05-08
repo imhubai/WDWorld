@@ -14,7 +14,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeBitm
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.GlyphAndBitmap;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import top.hugongzi.wdw.fcore.Log;
+import top.hugongzi.wdw.core.Log;
 
 import java.lang.reflect.Field;
 

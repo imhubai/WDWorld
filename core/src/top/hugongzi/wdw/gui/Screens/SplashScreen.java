@@ -2,14 +2,13 @@ package top.hugongzi.wdw.gui.Screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.AlphaAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import top.hugongzi.wdw.GameEntry;
-import top.hugongzi.wdw.fcore.Log;
+import top.hugongzi.wdw.core.Log;
 
 /**
  * 开始屏幕
