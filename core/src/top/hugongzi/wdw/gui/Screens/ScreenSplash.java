@@ -15,7 +15,7 @@ import top.hugongzi.wdw.core.Log;
  *
  * @author Hubai
  */
-public class SplashScreen extends AbstractScreen {
+public class ScreenSplash extends AbstractScreen {
     Texture texture;
     Image image;
     float delta = 0;
@@ -24,7 +24,7 @@ public class SplashScreen extends AbstractScreen {
      */
     Game game;
 
-    public SplashScreen(Game game) {
+    public ScreenSplash(Game game) {
         this.game = game;
     }
 
@@ -38,10 +38,10 @@ public class SplashScreen extends AbstractScreen {
         image.getColor().a = 0F;
         AlphaAction action = Actions.alpha(1F, 1F);
         image.addAction(action);
-        GameEntry.loginScreen = new LoginScreen();
-        GameEntry.loginScreen.create();
-        GameEntry.overlapScreen = new OverlapScreen();
-        GameEntry.overlapScreen.create();
+        GameEntry.screenLogin = new ScreenLogin();
+        GameEntry.screenLogin.create();
+        GameEntry.screenOverlap = new ScreenOverlap();
+        GameEntry.screenOverlap.create();
     }
 
     @Override
@@ -66,8 +66,8 @@ public class SplashScreen extends AbstractScreen {
             AlphaAction action2 = Actions.alpha(0F, 0.7F);
             image.addAction(action2);
         } else if (v >= 4f) {
-            GameEntry.addScreen(GameEntry.loginScreen);
-            GameEntry.addScreen(GameEntry.overlapScreen);
+            GameEntry.addScreen(GameEntry.screenLogin);
+            GameEntry.addScreen(GameEntry.screenOverlap);
             this.dispose();
             remove();
         }

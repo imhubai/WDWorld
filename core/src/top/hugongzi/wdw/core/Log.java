@@ -9,10 +9,10 @@ import top.hugongzi.wdw.GameEntry;
  * @author Hubai
  */
 public class Log {
-    private static String NullMsg = "NULL LOG FOUND! PLEASE CHECK LOG DETAIL.";
-    private static Logger ilogger = new Logger(GameEntry.GAMENAME + "][I", Logger.INFO);
-    private static Logger dlogger = new Logger(GameEntry.GAMENAME + "][D", Logger.DEBUG);
-    private static Logger elogger = new Logger(GameEntry.GAMENAME + "][E", Logger.ERROR);
+    private static final String NullMsg = "NULL LOG FOUND! PLEASE CHECK LOG DETAIL.";
+    private static final Logger ilogger = new Logger(GameEntry.GAMENAME + "][I", Logger.INFO);
+    private static final Logger dlogger = new Logger(GameEntry.GAMENAME + "][D", Logger.DEBUG);
+    private static final Logger elogger = new Logger(GameEntry.GAMENAME + "][E", Logger.ERROR);
 
     /**
      * 添加一条 <b>消息</b> 等级的日志
@@ -40,10 +40,5 @@ public class Log {
      */
     public static void e(Object obj, Throwable error) {
         elogger.error(obj == null ? NullMsg : obj.toString(), error);
-        StringBuilder text = new StringBuilder(obj == null ? NullMsg : obj.toString());
-        text.append("\n");
-        text.append("[#ff00ff]").append(error.getLocalizedMessage()).append("[]");
-        for (StackTraceElement ele : error.getStackTrace())
-            text.append("\n\t[#fc2929]at ").append(ele.getClassName()).append(".").append(ele.getMethodName()).append(":[][#8493ff]").append(ele.getLineNumber()).append("[]");
     }
 }

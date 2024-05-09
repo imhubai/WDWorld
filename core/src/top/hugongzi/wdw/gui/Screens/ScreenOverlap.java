@@ -6,8 +6,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import top.hugongzi.wdw.GameEntry;
 import top.hugongzi.wdw.gui.Buttons.GameGUI;
 
-public class OverlapScreen extends AbstractScreen {
-    public static String CLASSNAME = LoginScreen.class.getSimpleName();
+public class ScreenOverlap extends AbstractScreen {
+    public static String CLASSNAME = ScreenLogin.class.getSimpleName();
     Label info;
     float delta;
 

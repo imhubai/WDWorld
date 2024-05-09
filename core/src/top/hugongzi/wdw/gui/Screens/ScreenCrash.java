@@ -4,7 +4,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import top.hugongzi.wdw.GameEntry;
 import top.hugongzi.wdw.gui.Buttons.GameGUI;
 
-public class CrashScreen extends AbstractScreen {
+public class ScreenCrash extends AbstractScreen {
     Label crashLabel;
 
     @Override

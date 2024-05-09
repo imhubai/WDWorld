@@ -28,15 +28,15 @@ import java.util.Vector;
 public class GameEntry extends Game implements InputProcessor {
     public static String CLASSNAME = GameEntry.class.getSimpleName();
     public static String GAMENAME = "wdw";
-    public static String GAMEVERSION = "t0.3.4";
+    public static String GAMEVERSION = "t0.3.5";
     public static int GAMEWIDTH, GAMEHEIGHT;
 
     public static SpriteBatch batch;
     public static ArrayMap<String, BitmapFont> font;
     public static AbstractScreen maingame;
-    public static LoginScreen loginScreen;
-    public static SplashScreen splashScreen;
-    public static OverlapScreen overlapScreen;
+    public static ScreenLogin screenLogin;
+    public static ScreenSplash screenSplash;
+    public static ScreenOverlap screenOverlap;
 
     public static Vector<AbstractScreen> screens = new Vector<>();
     private static List<AbstractScreen> InsertScreens = new ArrayList<>();
@@ -84,9 +84,9 @@ public class GameEntry extends Game implements InputProcessor {
         Gdx.input.setInputProcessor(this);
 
         //初始化屏幕
-        splashScreen = new SplashScreen(this);
-        splashScreen.create();
-        addScreen(splashScreen);
+        screenSplash = new ScreenSplash(this);
+        screenSplash.create();
+        addScreen(screenSplash);
     }
 
     public void render() {
@@ -107,9 +107,9 @@ public class GameEntry extends Game implements InputProcessor {
         //如果空栈,初始化一个崩溃界面
         if (screens.isEmpty()) {
             Log.e("CRASHED:Stack has 0 screen to render()", new Throwable());
-            CrashScreen crashScreen = new CrashScreen();
-            crashScreen.create();
-            screens.add(crashScreen);
+            ScreenCrash screenCrash = new ScreenCrash();
+            screenCrash.create();
+            screens.add(screenCrash);
         }
         for (AbstractScreen s:screens) {
             Log.d("screen draw << " + s);

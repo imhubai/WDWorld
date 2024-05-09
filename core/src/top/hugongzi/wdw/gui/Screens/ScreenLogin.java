@@ -28,8 +28,8 @@ import java.util.List;
  *
  * @author Hubai
  */
-public class LoginScreen extends AbstractScreen {
-    public static String CLASSNAME = LoginScreen.class.getSimpleName();
+public class ScreenLogin extends AbstractScreen {
+    public static String CLASSNAME = ScreenLogin.class.getSimpleName();
     ObjectMap<String, Group> page = new ObjectMap<>();
     Group root;
     Label msglabel, label_server_title;
@@ -94,7 +94,7 @@ public class LoginScreen extends AbstractScreen {
             case "other":
                 page.get(pagename).setVisible(true);
                 List<Actor> list_other = new ArrayList<>();
-                String verlabel_s = "ver:" + GameEntry.GAMEVERSION + " 测试版本 Visit www.hugongzi.top";
+                String verlabel_s = "ver:" + GameEntry.GAMEVERSION + " Test Version Visit www.hugongzi.top";
                 Label verLabel = GameGUI.label_Default(verlabel_s, 0, 0);
                 list_other.add(verLabel);
 
@@ -112,26 +112,28 @@ public class LoginScreen extends AbstractScreen {
                 page.get(pagename).setVisible(true);
                 List<Actor> list_login = new ArrayList<>();
 
-                Label label_login_title = GameGUI.label_Big("用户登入", 10, 360);
+                Label label_login_title = GameGUI.label_Big("User Login", 10, 360);
                 list_login.add(label_login_title);
 
-                TextField tf_login_password = GameGUI.Tf_Default("", 320, 48, 80, 200);
+                TextField tf_login_password = GameGUI.Tf_Default("", 350, 48, 80, 200);
                 tf_login_password.setPasswordMode(true);
                 tf_login_password.setPasswordCharacter((char) 61440);
-                tf_login_password.setMessageText("请输入密码");
+                tf_login_password.setMessageText("Input password");
+                tf_login_password.setText("123456");
                 list_login.add(tf_login_password);
 
-                TextField tf_login_username = GameGUI.Tf_Default("", 320, 48, 80, 280);
-                tf_login_username.setMessageText("请输入账号");
+                TextField tf_login_username = GameGUI.Tf_Default("", 350, 48, 80, 280);
+                tf_login_username.setMessageText("Input userid");
+                tf_login_username.setText("admin");
                 list_login.add(tf_login_username);
 
-                Label label_login_username = GameGUI.label_Default("账号", 10, 290);
+                Label label_login_username = GameGUI.label_Default("account", 10, 290);
                 list_login.add(label_login_username);
 
-                Label label_login_password = GameGUI.label_Default("密码", 10, 210);
+                Label label_login_password = GameGUI.label_Default("password", 10, 210);
                 list_login.add(label_login_password);
 
-                Button btn_login_login = GameGUI.TextBtn_Default("登录", 10, 100);
+                Button btn_login_login = GameGUI.TextBtn_Default("Login", 10, 100);
                 btn_login_login.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -144,7 +146,7 @@ public class LoginScreen extends AbstractScreen {
                 });
                 list_login.add(btn_login_login);
 
-                Button btn_login_register = GameGUI.TextBtn_Default("注册", 220, 100);
+                Button btn_login_register = GameGUI.TextBtn_Default("Register", 220, 100);
                 btn_login_register.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -160,49 +162,49 @@ public class LoginScreen extends AbstractScreen {
                 page.get(pagename).setVisible(false);
                 List<Actor> list_register = new ArrayList<>();
 
-                Label label_register_title = GameGUI.label_Big("用户注册", 10, 620);
+                Label label_register_title = GameGUI.label_Big("User Register", 10, 620);
                 list_register.add(label_register_title);
 
                 TextField tf_register_name = GameGUI.Tf_Default("", 320, 48, 80, 500);
-                tf_register_name.setMessageText("请输入昵称(无法修改!)");
+                tf_register_name.setMessageText("Please input name");
                 list_register.add(tf_register_name);
 
-                Label label_register_name = GameGUI.label_Default("昵称", 10, 510);
+                Label label_register_name = GameGUI.label_Default("name", 10, 510);
                 list_register.add(label_register_name);
 
                 TextField tf_register_username = GameGUI.Tf_Default("", 320, 48, 80, 420);
-                tf_register_username.setMessageText("小写字母开头,4-18个字节");
+                tf_register_username.setMessageText("locase alpha,4-18 chars");
                 list_register.add(tf_register_username);
 
-                Label label_register_username = GameGUI.label_Default("账号", 10, 430);
+                Label label_register_username = GameGUI.label_Default("account", 10, 430);
                 list_register.add(label_register_username);
 
                 TextField tf_register_password = GameGUI.Tf_Default("", 320, 48, 80, 340);
                 tf_register_password.setPasswordMode(true);
                 tf_register_password.setPasswordCharacter((char) 61440);
-                tf_register_password.setMessageText("请输入密码");
+                tf_register_password.setMessageText("Input password");
                 list_register.add(tf_register_password);
 
-                Label label_register_password = GameGUI.label_Default("密码", 10, 350);
+                Label label_register_password = GameGUI.label_Default("password", 10, 350);
                 list_register.add(label_register_password);
 
                 TextField tf_register_password2 = GameGUI.Tf_Default("", 320, 48, 80, 260);
                 tf_register_password2.setPasswordMode(true);
                 tf_register_password2.setPasswordCharacter((char) 61440);
-                tf_register_password2.setMessageText("请再输入一次密码");
+                tf_register_password2.setMessageText("Input password again");
                 list_register.add(tf_register_password2);
 
-                Label label_register_password2 = GameGUI.label_Default("验证", 10, 270);
+                Label label_register_password2 = GameGUI.label_Default("verify", 10, 270);
                 list_register.add(label_register_password2);
 
                 TextField tf_register_email = GameGUI.Tf_Default("", 320, 48, 80, 180);
-                tf_register_email.setMessageText("请输入邮箱");
+                tf_register_email.setMessageText("input email");
                 list_register.add(tf_register_email);
 
-                Label label_register_email = GameGUI.label_Default("邮箱", 10, 190);
+                Label label_register_email = GameGUI.label_Default("email", 10, 190);
                 list_register.add(label_register_email);
 
-                Label btn_register_back = GameGUI.label_Default("返回", 80, 90);
+                Label btn_register_back = GameGUI.label_Default("back", 80, 90);
                 btn_register_back.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -211,7 +213,7 @@ public class LoginScreen extends AbstractScreen {
                 });
                 list_register.add(btn_register_back);
 
-                Button btn_register = GameGUI.TextBtn_Default("注册", 220, 80);
+                Button btn_register = GameGUI.TextBtn_Default("Register", 220, 80);
                 btn_register.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -221,7 +223,7 @@ public class LoginScreen extends AbstractScreen {
                         String register_password2 = tf_register_password2.getText();
                         String register_email = label_register_email.getText().toString();
                         if (!register_password.equals(register_password2)) {
-                            msgwindow("密码不一致!");
+                            msgwindow("password isn't same!");
                         } else {
                             post("reg.php?username=" + register_username + "&" + "name=" + register_name + "&" + "password=" + register_password + "&" + "email=" + register_email + "&" + "version=" + version, "reg");
                         }
@@ -237,7 +239,7 @@ public class LoginScreen extends AbstractScreen {
                 List<Actor> list_server = new ArrayList<>();
                 label_server_title = GameGUI.label_Big("welcome", 10, 620);
                 list_server.add(label_server_title);
-                Label label_server_change = GameGUI.label_Default("修改信息", 10, 580);
+                Label label_server_change = GameGUI.label_Default("Change info", 10, 580);
                 label_server_change.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -246,7 +248,7 @@ public class LoginScreen extends AbstractScreen {
                 });
                 list_server.add(label_server_change);
 
-                Label label_server_off = GameGUI.label_Default("退出登录", 150, 580);
+                Label label_server_off = GameGUI.label_Default("Exit account", 150, 580);
 
                 label_server_off.addListener(new ClickListener() {
                     @Override
@@ -256,7 +258,7 @@ public class LoginScreen extends AbstractScreen {
                 });
                 list_server.add(label_server_off);
 
-                Label label_server_listtitle = GameGUI.label_Default("服务器列表", 10, 520);
+                Label label_server_listtitle = GameGUI.label_Default("Server List", 10, 520);
                 list_server.add(label_server_listtitle);
                 serverbtnlist.add(GameGUI.TextBtn_Default("", 10, 500 - 50));
                 serverbtnlist.add(GameGUI.TextBtn_Default("", 10, 500 - 110));
@@ -268,24 +270,24 @@ public class LoginScreen extends AbstractScreen {
                 page.get(pagename).setVisible(false);
                 List<Actor> list_change = new ArrayList<>();
 
-                Label label_change_title = GameGUI.label_Big("更改信息", 10, 620);
+                Label label_change_title = GameGUI.label_Big("Change", 10, 620);
                 list_change.add(label_change_title);
 
                 TextField tf_change_newpwd = GameGUI.Tf_Default("", 320, 48, 80, 500);
-                tf_change_newpwd.setMessageText("新密码(留空不修改)");
+                tf_change_newpwd.setMessageText("new password(not change without modification)");
                 list_change.add(tf_change_newpwd);
 
-                Label label_change_newpwd = GameGUI.label_Default("新密码", 10, 510);
+                Label label_change_newpwd = GameGUI.label_Default("password", 10, 510);
                 list_change.add(label_change_newpwd);
 
                 TextField tf_change_newemail = GameGUI.Tf_Default("", 320, 48, 80, 420);
-                tf_change_newemail.setMessageText("新邮箱(留空不修改)");
+                tf_change_newemail.setMessageText("new email(not change without modification)");
                 list_change.add(tf_change_newemail);
 
-                Label label_change_newemail = GameGUI.label_Default("新邮箱", 10, 430);
+                Label label_change_newemail = GameGUI.label_Default("email", 10, 430);
                 list_change.add(label_change_newemail);
 
-                Label btn_change_back = GameGUI.label_Default("返回", 80, 90);
+                Label btn_change_back = GameGUI.label_Default("back", 80, 90);
                 btn_change_back.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -302,7 +304,7 @@ public class LoginScreen extends AbstractScreen {
                         String newemail = tf_change_newemail.getText();
                         String cmd = "updateuser.php?username=" + username + "&" + "password=" + password + "&" + "version=" + version;
                         if (newpwd.isEmpty() && newemail.isEmpty()) {
-                            msgwindow("新密码或新邮箱不能为空");
+                            msgwindow("new password or email leave blank");
                             return;
                         } else if (!newpwd.isEmpty()) {
                             cmd += "&newpwd=" + newpwd;
@@ -414,12 +416,12 @@ public class LoginScreen extends AbstractScreen {
 
             @Override
             public void failed(Throwable throwable) {
-                msgwindow("服务器异常\n" + throwable.toString());
+                msgwindow("Server error\n" + throwable.toString());
             }
 
             @Override
             public void cancelled() {
-                msgwindow("取消操作");
+                msgwindow("Cancel");
             }
 
         });
@@ -439,7 +441,7 @@ public class LoginScreen extends AbstractScreen {
             String[] obj = res[1].split("&");
             name = obj[0];
             email = obj[2];
-            label_server_title.setText("欢迎你," + name + "!");
+            label_server_title.setText("Welcome," + name + "!");
         } else {
             msgwindow(res[1]);
         }
@@ -491,7 +493,7 @@ public class LoginScreen extends AbstractScreen {
             }
             if (temp.length == 0) {
                 TextButton btn = serverbtnlist.get(0);
-                btn.setText("服务器维护中");
+                btn.setText("Server is under maintenance");
                 page.get("server").addActor(btn);
             }
             post("getuserinfo.php?username=" + username + "&" + "password=" + password + "&" + "version=" + version, "getinfo");
