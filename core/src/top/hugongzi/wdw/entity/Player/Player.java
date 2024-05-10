@@ -1,7 +1,6 @@
-package top.hugongzi.wdw.core;
+package top.hugongzi.wdw.entity.Player;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -12,43 +11,47 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import top.hugongzi.wdw.core.AnimationManager;
+import top.hugongzi.wdw.core.Log;
 
+import java.util.ArrayList;
+
+/**
+ * Player类，玩家自身
+ */
 public class Player extends Actor {
 
-    private static final int FRAME_COLS = 4, FRAME_ROWS = 4;
     private final Sprite sprite;
     public float speed = 5 * 32;
+    AnimationManager animationManager;
     Animation<TextureRegion> walkAnimation_s, walkAnimation_n, walkAnimation_e, walkAnimation_w;
     Animation<TextureRegion> stand_s, stand_n, stand_e, stand_w;
-    Texture walkSheet;
     TextureRegion currentFrame;
-    float stateTime;
+    float stateTime = 0f;
     PlayerState currentState;
+    private PlayerData playerData;
     private Body physicalBody;
     private Vector2 currentVelocity = new Vector2(0, 0);
-    private float time = 0f;
 
-    public Player(Vector2 startPosition, World world) {
-        super();
-        walkSheet = new Texture(Gdx.files.internal("Player/Boy/player1_te.png"));
-        TextureRegion[][] walkFrames = TextureRegion.split(walkSheet, walkSheet.getWidth() / FRAME_COLS, walkSheet.getHeight() / FRAME_ROWS);
+    public Player(Vector2 position, World world) {
+        ArrayList<Animation<TextureRegion>> animationPlayer = animationManager.createAnimation_player("Player/Boy/player1_te.png", 4, 4, 0.25f);
+        walkAnimation_s = animationPlayer.get(0);
+        walkAnimation_w = animationPlayer.get(1);
+        walkAnimation_e = animationPlayer.get(2);
+        walkAnimation_n = animationPlayer.get(3);
+        stand_s = animationPlayer.get(4);
+        stand_w = animationPlayer.get(5);
+        stand_e = animationPlayer.get(6);
+        stand_n = animationPlayer.get(7);
 
-        walkAnimation_s = new Animation<>(0.25f, walkFrames[0]);
-        walkAnimation_w = new Animation<>(0.25f, walkFrames[1]);
-        walkAnimation_e = new Animation<>(0.25f, walkFrames[2]);
-        walkAnimation_n = new Animation<>(0.25f, walkFrames[3]);
-        stand_s = new Animation<>(0.25f, walkFrames[0][0]);
-        stand_w = new Animation<>(0.25f, walkFrames[1][0]);
-        stand_e = new Animation<>(0.25f, walkFrames[2][0]);
-        stand_n = new Animation<>(0.25f, walkFrames[3][0]);
-        stateTime = 0f;
         currentFrame = stand_s.getKeyFrame(0);
         currentState = PlayerState.STANDING_S;
         sprite = new Sprite(stand_s.getKeyFrame(0));
-        setBounds(startPosition.x, startPosition.y, walkFrames[0][0].getRegionWidth(), walkFrames[0][0].getRegionHeight());
 
-        physicalBody = createBox(world, startPosition.x, startPosition.y, walkFrames[0][0].getRegionWidth(), walkFrames[0][0].getRegionHeight(), false);
-        Log.i(" " + startPosition.x + " " + startPosition.y + " " + walkFrames[0][0].getRegionWidth() + " " + walkFrames[0][0].getRegionHeight());
+        setBounds(position.x, position.y, animationManager.getRegionWidth(), animationManager.getRegionHeight());
+
+        physicalBody = createBox(world, position.x, position.y, animationManager.getRegionWidth(), animationManager.getRegionHeight(), false);
+        Log.i(" " + position.x + " " + position.y + " " + animationManager.getRegionWidth() + " " + animationManager.getRegionHeight());
         physicalBody.setUserData(this);
     }
 
@@ -63,30 +66,56 @@ public class Player extends Actor {
         def.fixedRotation = true;
         Body pBody = world.createBody(def);
         PolygonShape shape = new PolygonShape();
-        shape.setAsBox(width / 3f, height / 4f);
+        shape.setAsBox(width / 4f, height / 4f);
         pBody.createFixture(shape, 1f);
         shape.dispose();
         return pBody;
+    }
+
+    public Body getPhysicalBody() {
+        return physicalBody;
+    }
+
+    public void setPhysicalBody(Body physicalBody) {
+        this.physicalBody = physicalBody;
+    }
+
+    public PlayerData getPlayerData() {
+        return playerData;
+    }
+
+    public void setPlayerData(PlayerData playerData) {
+        this.playerData = playerData;
     }
 
     @Override
     public void act(float delta) {
         super.act(delta);
         stateTime += Gdx.graphics.getDeltaTime();
-        trackMovement(delta);
+        // trackMovement(delta);
     }
 
     public void setTime(float time) {
-        this.time = time;
+        stateTime = time;
     }
 
     public void reset() {
         setTime(0f);
-        stateTime = 0f;
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
+        get_State();
+        sprite.setRegion(currentFrame);
+        sprite.setPosition(getX(), getY());
+        sprite.draw(batch);
+    }
+
+    public void update(float delta) {
+        trackMovement(delta);
+    }
+
+    private void get_State() {
         switch (currentState) {
             case WALKING_N:
                 currentFrame = walkAnimation_n.getKeyFrame(stateTime, true);
@@ -119,16 +148,12 @@ public class Player extends Actor {
             default:
                 Log.e("", new IllegalArgumentException());
         }
-        sprite.setRegion(currentFrame);
-        sprite.setPosition(getX(), getY());
-        sprite.draw(batch);
     }
 
     private void trackMovement(float delta) {
         float movement = delta * speed;
         physicalBody.setLinearVelocity(currentVelocity.cpy().scl(movement));
-
-        this.setPosition(physicalBody.getPosition().x-32 / 2f-5, physicalBody.getPosition().y - 32 / 2f);
+        this.setPosition(physicalBody.getPosition().x - 32 / 2f - 10, physicalBody.getPosition().y - 32 / 2f);
     }
 
     public void updatePlayerState(PlayerState newState, Vector2 newVelocity) {
@@ -155,6 +180,5 @@ public class Player extends Actor {
             }
             reset();
         } else currentState = newState;
-        Log.i(currentState.toString() + " " + stateTime);
     }
 }

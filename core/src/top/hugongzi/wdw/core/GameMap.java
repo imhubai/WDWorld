@@ -32,7 +32,7 @@ public class GameMap {
     public GameMap(String mapstr, Stage stage) {
         this.stage = stage;
         this.map = new TmxMapLoader().load(mapstr);
-        world = new World(new Vector2(0, -10), true);
+        world = new World(new Vector2(0, 0), true);
         worldRenderer = new Box2DDebugRenderer();
         tileSize = ((TiledMapTileLayer) map.getLayers().get(0)).getTileWidth();
         mapRenderer = new OrthogonalTiledMapRenderer(map, 1f);

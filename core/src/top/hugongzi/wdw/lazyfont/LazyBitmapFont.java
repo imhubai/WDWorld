@@ -51,7 +51,7 @@ public class LazyBitmapFont extends BitmapFont {
             f.setAccessible(true);
             f.set(this, data);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(e);
         }
 
         genrateData();
@@ -68,7 +68,7 @@ public class LazyBitmapFont extends BitmapFont {
             field.setAccessible(true);
             face = (Face) field.get(generator);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(e);
             return;
         }
 

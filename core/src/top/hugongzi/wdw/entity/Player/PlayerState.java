@@ -1,6 +1,7 @@
-package top.hugongzi.wdw.core;
+package top.hugongzi.wdw.entity.Player;
 
 import com.badlogic.gdx.math.Vector2;
+import top.hugongzi.wdw.core.Log;
 
 public enum PlayerState {
     STANDING_S, STANDING_N, STANDING_E, STANDING_W,

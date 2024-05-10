@@ -503,11 +503,9 @@ public class ScreenLogin extends AbstractScreen {
     }
 
     private void startGame(String serverName) {
-        GameEntry.maingame = MainGame.getInstance(gameurl.get(serverName), serverName, phpserverurl);
+        GameEntry.maingame = MainGame.getInstance(gameurl.get(serverName), serverName, phpserverurl,username,name);
         if(singlegamelock){
             GameEntry.addScreen(GameEntry.maingame);
-            //Collections.reverse(GameEntry.screens);
-            //Log.i(GameEntry.screens);
             singlegamelock =false;
         }
     }

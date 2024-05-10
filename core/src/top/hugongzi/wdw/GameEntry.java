@@ -28,7 +28,7 @@ import java.util.Vector;
 public class GameEntry extends Game implements InputProcessor {
     public static String CLASSNAME = GameEntry.class.getSimpleName();
     public static String GAMENAME = "wdw";
-    public static String GAMEVERSION = "t0.3.5";
+    public static String GAMEVERSION = "t0.3.6";
     public static int GAMEWIDTH, GAMEHEIGHT;
 
     public static SpriteBatch batch;
@@ -92,7 +92,6 @@ public class GameEntry extends Game implements InputProcessor {
     public void render() {
         Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        //Log.i(Gdx.graphics.getFramesPerSecond());
         prepareScreen();
     }
 

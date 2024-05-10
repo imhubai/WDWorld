@@ -4,7 +4,7 @@ buildscript {
         mavenLocal()
         mavenCentral()
         google()
-        maven { url 'http://maven.aliyun.com/nexus/content/groups/public/' }
+        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
         maven { url "https://maven.aliyun.com/repository/public" }
         gradlePluginPortal()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
@@ -74,5 +74,25 @@ project(":core") {
         api "com.esotericsoftware.spine:spine-libgdx:4.2.0"
         api "com.github.tommyettinger:libgdx-utils:0.13.7"
         api "com.esotericsoftware:kryonet:2.22.0-RC1"
+        api 'com.badlogicgames.gdx:gdx-backend-headless:1.12.1'
+
+    }
+}
+project(":server") {
+    apply plugin: "java-library"
+
+    dependencies {
+        api "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+        api "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        api "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
+        api "com.badlogicgames.gdx:gdx:$gdxVersion"
+        api "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+        api "com.badlogicgames.gdx-controllers:gdx-controllers-core:$gdxControllersVersion"
+        api "com.badlogicgames.gdx:gdx-ai:$aiVersion"
+        api "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+        api "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
+        api "com.esotericsoftware:kryonet:2.22.0-RC1"
+        api 'com.badlogicgames.gdx:gdx-backend-headless:1.12.1'
+
     }
 }

@@ -1,52 +1,59 @@
 package top.hugongzi.wdw.gui.Screens;
 
+import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.net.Socket;
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryonet.Client;
+import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import top.hugongzi.wdw.GameEntry;
-import top.hugongzi.wdw.core.FreeRoamingMovementListener;
+import top.hugongzi.wdw.Messages.LoginMessage;
+import top.hugongzi.wdw.Messages.NewbieMessage;
 import top.hugongzi.wdw.core.GameMap;
 import top.hugongzi.wdw.core.Log;
-import top.hugongzi.wdw.core.Player;
-import top.hugongzi.wdw.wdwServer.ClientRequest;
-import top.hugongzi.wdw.wdwServer.ServerResponse;
+import top.hugongzi.wdw.core.OClient;
+import top.hugongzi.wdw.entity.Player.Player;
+import top.hugongzi.wdw.gui.Buttons.GameGUI;
+import top.hugongzi.wdw.listener.CameraListener;
+import top.hugongzi.wdw.listener.FreeRoamingMovementListener;
 
 import java.io.IOException;
 
 public class MainGame extends AbstractScreen {
-    private static final float CAMERA_SPEED = 200.0f;
-    public static String CLASSNAME = ScreenLogin.class.getSimpleName();
     private static volatile MainGame instance;
+    private final String serverAddress;
+    private final String serverName;
+    private final String phpserverurl;
+    private final String username;
+    private final String name;
     OrthographicCamera camera;
     GameMap gameMap;
-    Socket mainsocket;
+    Label info;
+    RayHandler rayHandler;
+    OClient client;
     float delta = 0;
     Player player;
-    private String serverAddress, serverName, phpserverurl;
-    private Vector2 direction;
 
-    private MainGame(String serverAddress, String serverName, String phpserverurl) {
+    private MainGame(String serverAddress, String serverName, String phpserverurl, String username, String name) {
         this.serverAddress = serverAddress;
         Log.i("SERVER AT:" + serverAddress);
         this.serverName = serverName;
         this.phpserverurl = phpserverurl;
+        this.username = username;
+        this.name = name;
         this.create();
         GameEntry.screenSplash.remove();
         GameEntry.screenLogin.remove();
         GameEntry.screenOverlap.remove();
     }
 
-    public static MainGame getInstance(String serverAddress, String serverName, String phpserverurl) {
+    public static MainGame getInstance(String serverAddress, String serverName, String phpserverurl, String username, String name) {
         if (instance == null) {
             synchronized (MainGame.class) {
                 if (instance == null) {
-                    instance = new MainGame(serverAddress, serverName, phpserverurl);
+                    instance = new MainGame(serverAddress, serverName, phpserverurl, username, name);
                 }
             }
         }
@@ -57,43 +64,53 @@ public class MainGame extends AbstractScreen {
     public void create() {
         stage = GameEntry.stage();
 
+        Group overlap = new Group();
+        info = GameGUI.label_Default("", 1000, 1000);
+        //overlap.addActor(info);
+        stage.addActor(info);
         try {
             tryConnect();
         } catch (IOException e) {
-            Log.e("Server Exception", new RuntimeException(e));
+            Log.e(new RuntimeException(e));
         }
-        gameMap = new GameMap("Maps/map003.tmx", stage);
-
         camera = (OrthographicCamera) stage.getCamera();
-        camera.zoom =0.5f;
+        camera.zoom = 0.5f;
+        LoginMessage loginMessage=new LoginMessage();
+        loginMessage.setId("dream");
+        client.sendUDP(loginMessage);
+        loadGameMap("Maps/map003.tmx", this.stage);
 
-        player = new Player(new Vector2(640f, 640f), gameMap.getWorld());
-        stage.addActor(player);
-        stage.addListener(new FreeRoamingMovementListener(player));
+        //player = new Player(new Vector2(640f, 640f), gameMap.getWorld());
+        //stage.addActor(player);
+        //stage.addListener(new FreeRoamingMovementListener(player));
+        //stage.addListener(new CameraListener(camera));
+    }
+
+    private void loadGameMap(String map, Stage stage) {
+        gameMap = new GameMap(map, stage);
+        rayHandler = new RayHandler(gameMap.getWorld());
+        rayHandler.setAmbientLight(1f, 1f, 1f, 1f);
+        rayHandler.setBlurNum(1);
+        rayHandler.setShadows(true);
     }
 
     public void tryConnect() throws IOException {
         String[] server = serverAddress.split(":");
-        Client client = new Client();
-        Kryo kryo = client.getKryo();
-        kryo.register(ClientRequest.class);
-        kryo.register(ServerResponse.class);
-        client.start();
-        client.connect(50000, server[0], Integer.parseInt(server[1]), Integer.parseInt(server[1]) + 1);
-        ClientRequest request = new ClientRequest();
-        request.text = "Here is the request";
-        client.sendTCP(request);
+        client = new OClient(server[0], Integer.parseInt(server[1]), Integer.parseInt(server[1]) + 1, this);
+        client.connect();
     }
 
     @Override
     public void draw() {
         gameMap.draw();
         stage.draw();
+        rayHandler.prepareRender();
+        rayHandler.updateAndRender();
     }
 
     private void updateCamera() {
-        camera.position.x =player.getX();
-        camera.position.y =player.getY();
+        camera.position.x = player.getX() + player.getWidth() / 2;
+        camera.position.y = player.getY() + player.getHeight() / 2;
 
         TiledMapTileLayer layer = (TiledMapTileLayer) gameMap.getMap().getLayers().get(0);
 
@@ -113,8 +130,12 @@ public class MainGame extends AbstractScreen {
     public void act() {
         delta += Gdx.graphics.getDeltaTime();
         stage.act();
-        updateCamera();
-        player.act(delta);
+        //updateCamera();
+        rayHandler.setCombinedMatrix(camera);
+        //player.act(delta);
+        info.setText("FPS:" + Gdx.graphics.getFramesPerSecond() + "\n" +
+                "Delta:" + delta + "\n" +
+                "UncompressedMem:" + Gdx.app.getJavaHeap() / 80000 + " MB" + "\n");
     }
 
     @Override
@@ -149,6 +170,14 @@ public class MainGame extends AbstractScreen {
 
     @Override
     public void dispose() {
+        rayHandler.dispose();
+    }
 
+    public void loginReceieved(LoginMessage m) {
+        Log.i("login?");
+    }
+
+    public void newbieReceieved(NewbieMessage m) {
+        Log.i("newbie?");
     }
 }
