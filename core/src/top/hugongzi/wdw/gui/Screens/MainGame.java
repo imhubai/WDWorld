@@ -16,8 +16,6 @@ import top.hugongzi.wdw.core.Log;
 import top.hugongzi.wdw.core.OClient;
 import top.hugongzi.wdw.entity.Player.Player;
 import top.hugongzi.wdw.gui.Buttons.GameGUI;
-import top.hugongzi.wdw.listener.CameraListener;
-import top.hugongzi.wdw.listener.FreeRoamingMovementListener;
 
 import java.io.IOException;
 
