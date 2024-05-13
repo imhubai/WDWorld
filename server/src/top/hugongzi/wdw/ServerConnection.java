@@ -14,9 +14,11 @@ public class ServerConnection implements MessageListener {
     private ServerWork wdWserver;
     private int tcpPORT, udpPORT;
     private List<Player> players;
+
     private OServer oServer;
     private Save save;
     private float deltaTime = 0;
+
     private LoginController loginController;
 
     public ServerConnection(ServerWork wdWserver, int tcpPORT, int udpPORT) {
@@ -25,16 +27,8 @@ public class ServerConnection implements MessageListener {
         this.udpPORT = udpPORT;
         oServer = new OServer(this, tcpPORT, udpPORT);
         players = new ArrayList<>();
-        save = new Save();
+
         loginController = new LoginController();
-    }
-
-    public ServerWork getWdWserver() {
-        return wdWserver;
-    }
-
-    public void setWdWserver(ServerWork wdWserver) {
-        this.wdWserver = wdWserver;
     }
 
     public void update(float deltaTime) {
@@ -51,11 +45,11 @@ public class ServerConnection implements MessageListener {
         loginController.loginID(id);
         Player player = save.loadSave(id);
         if (player == null) {
-            oServer.sendToTCP(con.getID(), new NewbieMessage());
+            oServer.sendToTCP(con.getID(),new NewbieMessage());
             return;
         }
         //players.add(new Player(m.getX(), m.getY(), 50, id));
-        System.out.println("Login Message recieved from : " + id);
+        ServerLog.i("Login Message recieved from : " + id);
         oServer.sendToUDP(con.getID(), m);
     }
 
@@ -65,7 +59,7 @@ public class ServerConnection implements MessageListener {
             players.remove(p);
             loginController.logoutid(p.getPlayerData().getId());
         });
-        System.out.println("Logout Message recieved from : " + m.getId() + " Size: " + players.size());
+        ServerLog.i("Logout Message recieved from : " + m.getId() + " Size: " + players.size());
     }
 
     @Override

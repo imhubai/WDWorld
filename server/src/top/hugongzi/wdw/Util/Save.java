@@ -1,6 +1,7 @@
 package top.hugongzi.wdw.Util;
 
 import com.badlogic.gdx.utils.Json;
+import top.hugongzi.wdw.ServerLog;
 import top.hugongzi.wdw.entity.Player.Player;
 import top.hugongzi.wdw.entity.Player.PlayerData;
 
@@ -16,7 +17,7 @@ public class Save {
         for (String dir : dirs) {
             File d = new File(dir);
             if (d.mkdir()) {
-                System.out.println(dir + "not found,created.");
+                ServerLog.i(dir + "not x");
             }
         }
     }
@@ -25,15 +26,11 @@ public class Save {
         String dir = "users/" + id.charAt(0) + "/";
         File d = new File(dir);
         if (d.mkdir()) {
-            System.out.println(dir + "not found,created.");
+            ServerLog.i(dir + "not x");
             return null;
         }
         dir += id + ".json";
         File save = new File(dir);
-        if (!save.exists()) {
-            System.out.println(dir + "not found,please check.");
-            return null;
-        }
         FileInputStream fis;
         StringBuilder stringBuilder = new StringBuilder();
         try {
@@ -44,7 +41,7 @@ public class Save {
             }
             fis.close();
         } catch (IOException e) {
-            System.out.println(e);
+            ServerLog.e(e);
         }
         Json json = new Json();
         return json.fromJson(Player.class, stringBuilder.toString());
@@ -55,7 +52,7 @@ public class Save {
         PlayerData data = player.getPlayerData();
         File alphaname = new File(dir + data.getId().charAt(0));
         if (alphaname.mkdir()) {
-            System.out.println(dir + "not found,created.");
+            ServerLog.i(dir + "not x");
         }
         dir += data.getId().charAt(0) + "/" + data.getId() + ".json";
         File file = new File(dir);
@@ -63,10 +60,10 @@ public class Save {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                System.out.println(e);
+                ServerLog.e(e);
             }
         }
-        FileOutputStream fos;
+        FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(file);
             Json json = new Json();
@@ -74,7 +71,7 @@ public class Save {
             fos.write(json.toString().getBytes());
             fos.close();
         } catch (IOException e) {
-            System.out.println(e);
+            ServerLog.e(e);
         }
     }
 }
