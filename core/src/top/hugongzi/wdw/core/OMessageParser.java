@@ -1,10 +1,17 @@
 package top.hugongzi.wdw.core;
 
+import top.hugongzi.wdw.entity.Player.Player;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
+ * 
  * A parsers class which has methods to constructs objects like
  * Players,Enemy,Bulltes from GameWorldMessage.
- *
+ * 
  * @author oguz
+ *
  */
 public class OMessageParser {
 /*
@@ -12,10 +19,10 @@ public class OMessageParser {
 	}
 
 	*//**
-     * Returns a player list from gameworld message. Including clients itself. Thats
-     * why when clients are rendering players on their screen, they should exclude
-     * the player with the same id.
-     *//*
+	 * Returns a player list from gameworld message. Including clients itself. Thats
+	 * why when clients are rendering players on their screen, they should exclude
+	 * the player with the same id.
+	 *//*
 	public static List<Player> getPlayersFromGWM(GameWorldMessage m) {
 
 		float[] tp = m.getPlayers();
