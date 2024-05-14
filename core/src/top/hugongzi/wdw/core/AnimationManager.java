@@ -39,7 +39,6 @@ public class AnimationManager {
 
     /**
      * 获取动画帧的宽度。
-     *
      * @return 动画帧的宽度
      */
     public float getRegionWidth(){
