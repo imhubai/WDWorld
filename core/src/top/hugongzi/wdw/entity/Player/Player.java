@@ -13,172 +13,549 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import top.hugongzi.wdw.core.AnimationManager;
 import top.hugongzi.wdw.core.Log;
+import top.hugongzi.wdw.entity.Item.Item;
+import top.hugongzi.wdw.entity.Mission.Mission;
+import top.hugongzi.wdw.entity.Skills.Skill;
+import top.hugongzi.wdw.entity.Talent.Talent;
 
 import java.util.ArrayList;
 
 /**
  * Player类，玩家自身
  */
-public class Player extends Actor {
-
-    private final Sprite sprite;
-    public float speed = 5 * 32;
-    AnimationManager animationManager;
-    Animation<TextureRegion> walkAnimation_s, walkAnimation_n, walkAnimation_e, walkAnimation_w;
-    Animation<TextureRegion> stand_s, stand_n, stand_e, stand_w;
-    TextureRegion currentFrame;
-    float stateTime = 0f;
+public class Player {
     PlayerState currentState;
-    private PlayerData playerData;
-    private Body physicalBody;
+    private Body body;
     private Vector2 currentVelocity = new Vector2(0, 0);
+    private ArrayList<Item> items;
+    private ArrayList<Skill> skills;
+    private ArrayList<String> friendid;
+    private ArrayList<Talent> talentid;
+    private ArrayList<Mission> missionid;
+    private boolean isMale;
+    private long level;
+    private long exp;
+    private int PVP_DAMAGE_SCALE;
+    private int PVP_WOUND_SCALE;
+    private long yuanbao;
+    private long gold;
+    private long sliver;
+    private long coin;
+    private long tickets;
+    private long hp, maxhp;
+    private long jing, maxjing;
+    private long qi, maxqi;
+    private long neili, maxneili;
+    private String bornplace;
+    private int age;
+    private String id;
+    private int gameday;
+    private float speed;
+    private int point_hp, point_magic, point_power, point_brain, point_speed;
+    private Boolean isnewbie;
+    private String name, purname;
+    private Boolean banchat;
+    private long birthday;
+    private String map;
+    private float x, y;
 
-    public Player(Vector2 position, World world) {
-        ArrayList<Animation<TextureRegion>> animationPlayer = animationManager.createAnimation_player("Player/Boy/player1_te.png", 4, 4, 0.25f);
-        walkAnimation_s = animationPlayer.get(0);
-        walkAnimation_w = animationPlayer.get(1);
-        walkAnimation_e = animationPlayer.get(2);
-        walkAnimation_n = animationPlayer.get(3);
-        stand_s = animationPlayer.get(4);
-        stand_w = animationPlayer.get(5);
-        stand_e = animationPlayer.get(6);
-        stand_n = animationPlayer.get(7);
-
-        currentFrame = stand_s.getKeyFrame(0);
-        currentState = PlayerState.STANDING_S;
-        sprite = new Sprite(stand_s.getKeyFrame(0));
-
-        setBounds(position.x, position.y, animationManager.getRegionWidth(), animationManager.getRegionHeight());
-
-        physicalBody = createBox(world, position.x, position.y, animationManager.getRegionWidth(), animationManager.getRegionHeight(), false);
-        Log.i(" " + position.x + " " + position.y + " " + animationManager.getRegionWidth() + " " + animationManager.getRegionHeight());
-        physicalBody.setUserData(this);
+    public String getBornplace() {
+        return bornplace;
     }
 
-    public static Body createBox(World world, float x, float y, float width, float height, boolean isStatic) {
-        BodyDef def = new BodyDef();
-        if (isStatic) {
-            def.type = BodyDef.BodyType.StaticBody;
-        } else {
-            def.type = BodyDef.BodyType.DynamicBody;
-        }
-        def.position.set(x, y);
-        def.fixedRotation = true;
-        Body pBody = world.createBody(def);
-        PolygonShape shape = new PolygonShape();
-        shape.setAsBox(width / 4f, height / 4f);
-        pBody.createFixture(shape, 1f);
-        shape.dispose();
-        return pBody;
+    public void setBornplace(String bornplace) {
+        this.bornplace = bornplace;
     }
 
-    public Body getPhysicalBody() {
-        return physicalBody;
+    public boolean isMale() {
+        return isMale;
     }
 
-    public void setPhysicalBody(Body physicalBody) {
-        this.physicalBody = physicalBody;
+    public void setMale(boolean male) {
+        isMale = male;
     }
 
-    public PlayerData getPlayerData() {
-        return playerData;
+    public long getCoin() {
+        return coin;
     }
 
-    public void setPlayerData(PlayerData playerData) {
-        this.playerData = playerData;
+    public void setCoin(long coin) {
+        this.coin = coin;
     }
 
-    @Override
-    public void act(float delta) {
-        super.act(delta);
-        stateTime += Gdx.graphics.getDeltaTime();
-        // trackMovement(delta);
+    public long getBirthday() {
+        return birthday;
     }
 
-    public void setTime(float time) {
-        stateTime = time;
+    public void setBirthday(long birthday) {
+        this.birthday = birthday;
     }
 
-    public void reset() {
-        setTime(0f);
+    public PlayerState getCurrentState() {
+        return currentState;
     }
 
-    @Override
-    public void draw(Batch batch, float parentAlpha) {
-        get_State();
-        sprite.setRegion(currentFrame);
-        sprite.setPosition(getX(), getY());
-        sprite.draw(batch);
+    public void setCurrentState(PlayerState currentState) {
+        this.currentState = currentState;
+    }
+
+    public Vector2 getCurrentVelocity() {
+        return currentVelocity;
+    }
+
+    public void setCurrentVelocity(Vector2 currentVelocity) {
+        this.currentVelocity = currentVelocity;
+    }
+
+    public ArrayList<Item> getItems() {
+        return items;
+    }
+
+    public void setItems(ArrayList<Item> items) {
+        this.items = items;
+    }
+
+    public ArrayList<Skill> getSkills() {
+        return skills;
+    }
+
+    public void setSkills(ArrayList<Skill> skills) {
+        this.skills = skills;
+    }
+
+    public ArrayList<String> getFriendid() {
+        return friendid;
+    }
+
+    public void setFriendid(ArrayList<String> friendid) {
+        this.friendid = friendid;
+    }
+
+    public ArrayList<Talent> getTalentid() {
+        return talentid;
+    }
+
+    public void setTalentid(ArrayList<Talent> talentid) {
+        this.talentid = talentid;
+    }
+
+    public ArrayList<Mission> getMissionid() {
+        return missionid;
+    }
+
+    public void setMissionid(ArrayList<Mission> missionid) {
+        this.missionid = missionid;
+    }
+
+    public long getLevel() {
+        return level;
+    }
+
+    public void setLevel(long level) {
+        this.level = level;
+    }
+
+    public long getExp() {
+        return exp;
+    }
+
+    public void setExp(long exp) {
+        this.exp = exp;
+    }
+
+    public int getPVP_DAMAGE_SCALE() {
+        return PVP_DAMAGE_SCALE;
+    }
+
+    public void setPVP_DAMAGE_SCALE(int PVP_DAMAGE_SCALE) {
+        this.PVP_DAMAGE_SCALE = PVP_DAMAGE_SCALE;
+    }
+
+    public int getPVP_WOUND_SCALE() {
+        return PVP_WOUND_SCALE;
+    }
+
+    public void setPVP_WOUND_SCALE(int PVP_WOUND_SCALE) {
+        this.PVP_WOUND_SCALE = PVP_WOUND_SCALE;
+    }
+
+    public long getYuanbao() {
+        return yuanbao;
+    }
+
+    public void setYuanbao(long yuanbao) {
+        this.yuanbao = yuanbao;
+    }
+
+    public long getGold() {
+        return gold;
+    }
+
+    public void setGold(long gold) {
+        this.gold = gold;
+    }
+
+    public long getSliver() {
+        return sliver;
+    }
+
+    public void setSliver(long sliver) {
+        this.sliver = sliver;
+    }
+
+    public long getTickets() {
+        return tickets;
+    }
+
+    public void setTickets(long tickets) {
+        this.tickets = tickets;
+    }
+
+    public long getHp() {
+        return hp;
+    }
+
+    public void setHp(long hp) {
+        this.hp = hp;
+    }
+
+    public long getMaxhp() {
+        return maxhp;
+    }
+
+    public void setMaxhp(long maxhp) {
+        this.maxhp = maxhp;
+    }
+
+    public long getJing() {
+        return jing;
+    }
+
+    public void setJing(long jing) {
+        this.jing = jing;
+    }
+
+    public long getMaxjing() {
+        return maxjing;
+    }
+
+    public void setMaxjing(long maxjing) {
+        this.maxjing = maxjing;
+    }
+
+    public long getQi() {
+        return qi;
+    }
+
+    public void setQi(long qi) {
+        this.qi = qi;
+    }
+
+    public long getMaxqi() {
+        return maxqi;
+    }
+
+    public void setMaxqi(long maxqi) {
+        this.maxqi = maxqi;
+    }
+
+    public long getNeili() {
+        return neili;
+    }
+
+    public void setNeili(long neili) {
+        this.neili = neili;
+    }
+
+    public long getMaxneili() {
+        return maxneili;
+    }
+
+    public void setMaxneili(long maxneili) {
+        this.maxneili = maxneili;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public int getGameday() {
+        return gameday;
+    }
+
+    public void setGameday(int gameday) {
+        this.gameday = gameday;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
+
+    public int getPoint_hp() {
+        return point_hp;
+    }
+
+    public void setPoint_hp(int point_hp) {
+        this.point_hp = point_hp;
+    }
+
+    public int getPoint_magic() {
+        return point_magic;
+    }
+
+    public void setPoint_magic(int point_magic) {
+        this.point_magic = point_magic;
+    }
+
+    public int getPoint_power() {
+        return point_power;
+    }
+
+    public void setPoint_power(int point_power) {
+        this.point_power = point_power;
+    }
+
+    public int getPoint_brain() {
+        return point_brain;
+    }
+
+    public void setPoint_brain(int point_brain) {
+        this.point_brain = point_brain;
+    }
+
+    public int getPoint_speed() {
+        return point_speed;
+    }
+
+    public void setPoint_speed(int point_speed) {
+        this.point_speed = point_speed;
+    }
+
+    public Boolean getIsnewbie() {
+        return isnewbie;
+    }
+
+    public void setIsnewbie(Boolean isnewbie) {
+        this.isnewbie = isnewbie;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getPurname() {
+        return purname;
+    }
+
+    public void setPurname(String purname) {
+        this.purname = purname;
+    }
+
+    public Boolean getBanchat() {
+        return banchat;
+    }
+
+    public void setBanchat(Boolean banchat) {
+        this.banchat = banchat;
+    }
+
+
+    public String getMap() {
+        return map;
+    }
+
+    public void setMap(String map) {
+        this.map = map;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public float getY() {
+        return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
+
+    public Body getBody() {
+        return body;
+    }
+
+    public void setBody(Body body) {
+        this.body = body;
     }
 
     public void update(float delta) {
-        trackMovement(delta);
+
     }
 
-    private void get_State() {
-        switch (currentState) {
-            case WALKING_N:
-                currentFrame = walkAnimation_n.getKeyFrame(stateTime, true);
-                break;
-            case STANDING_N:
-                currentFrame = stand_n.getKeyFrame(stateTime, false);
-                break;
-            case WALKING_S:
-                currentFrame = walkAnimation_s.getKeyFrame(stateTime, true);
-                break;
-            case STANDING_S:
-                currentFrame = stand_s.getKeyFrame(stateTime, false);
-                break;
-            case WALKING_NE:
-            case WALKING_SE:
-            case WALKING_E:
-                currentFrame = walkAnimation_e.getKeyFrame(stateTime, true);
-                break;
-            case STANDING_E:
-                currentFrame = stand_e.getKeyFrame(stateTime, false);
-                break;
-            case WALKING_NW:
-            case WALKING_SW:
-            case WALKING_W:
-                currentFrame = walkAnimation_w.getKeyFrame(stateTime, true);
-                break;
-            case STANDING_W:
-                currentFrame = stand_w.getKeyFrame(stateTime, false);
-                break;
-            default:
-                Log.e("", new IllegalArgumentException());
+    public class PlayerActor extends Actor {
+        private final Sprite sprite;
+        public float speed = 5 * 32;
+        AnimationManager animationManager;
+        Animation<TextureRegion> walkAnimation_s, walkAnimation_n, walkAnimation_e, walkAnimation_w;
+        Animation<TextureRegion> stand_s, stand_n, stand_e, stand_w;
+        TextureRegion currentFrame;
+        float stateTime = 0f;
+
+        public PlayerActor(Vector2 position, World world) {
+            ArrayList<Animation<TextureRegion>> animationPlayer = animationManager.createAnimation_player("Player/Boy/player1_te.png", 4, 4, 0.25f);
+            walkAnimation_s = animationPlayer.get(0);
+            walkAnimation_w = animationPlayer.get(1);
+            walkAnimation_e = animationPlayer.get(2);
+            walkAnimation_n = animationPlayer.get(3);
+            stand_s = animationPlayer.get(4);
+            stand_w = animationPlayer.get(5);
+            stand_e = animationPlayer.get(6);
+            stand_n = animationPlayer.get(7);
+
+            currentFrame = stand_s.getKeyFrame(0);
+            currentState = PlayerState.STANDING_S;
+            sprite = new Sprite(stand_s.getKeyFrame(0));
+
+            setBounds(position.x, position.y, animationManager.getRegionWidth(), animationManager.getRegionHeight());
+
+            body = createBox(world, position.x, position.y, animationManager.getRegionWidth(), animationManager.getRegionHeight(), false);
+            Log.i(" " + position.x + " " + position.y + " " + animationManager.getRegionWidth() + " " + animationManager.getRegionHeight());
+            body.setUserData(this);
         }
-    }
 
-    private void trackMovement(float delta) {
-        float movement = delta * speed;
-        physicalBody.setLinearVelocity(currentVelocity.cpy().scl(movement));
-        this.setPosition(physicalBody.getPosition().x - 32 / 2f - 10, physicalBody.getPosition().y - 32 / 2f);
-    }
+        public Body createBox(World world, float x, float y, float width, float height, boolean isStatic) {
+            BodyDef def = new BodyDef();
+            if (isStatic) {
+                def.type = BodyDef.BodyType.StaticBody;
+            } else {
+                def.type = BodyDef.BodyType.DynamicBody;
+            }
+            def.position.set(x, y);
+            def.fixedRotation = true;
+            Body pBody = world.createBody(def);
+            PolygonShape shape = new PolygonShape();
+            shape.setAsBox(width / 4f, height / 4f);
+            pBody.createFixture(shape, 1f);
+            shape.dispose();
+            return pBody;
+        }
 
-    public void updatePlayerState(PlayerState newState, Vector2 newVelocity) {
-        currentVelocity = newVelocity;
-        physicalBody.setLinearVelocity(currentVelocity);
-        if (newState == null) {
+        public void update(float delta) {
+            trackMovement(delta);
+        }
+
+        private void get_State() {
             switch (currentState) {
                 case WALKING_N:
-                    currentState = PlayerState.STANDING_N;
+                    currentFrame = walkAnimation_n.getKeyFrame(stateTime, true);
+                    break;
+                case STANDING_N:
+                    currentFrame = stand_n.getKeyFrame(stateTime, false);
                     break;
                 case WALKING_S:
-                    currentState = PlayerState.STANDING_S;
+                    currentFrame = walkAnimation_s.getKeyFrame(stateTime, true);
+                    break;
+                case STANDING_S:
+                    currentFrame = stand_s.getKeyFrame(stateTime, false);
                     break;
                 case WALKING_NE:
                 case WALKING_SE:
                 case WALKING_E:
-                    currentState = PlayerState.STANDING_E;
+                    currentFrame = walkAnimation_e.getKeyFrame(stateTime, true);
+                    break;
+                case STANDING_E:
+                    currentFrame = stand_e.getKeyFrame(stateTime, false);
                     break;
                 case WALKING_NW:
                 case WALKING_SW:
                 case WALKING_W:
-                    currentState = PlayerState.STANDING_W;
+                    currentFrame = walkAnimation_w.getKeyFrame(stateTime, true);
                     break;
+                case STANDING_W:
+                    currentFrame = stand_w.getKeyFrame(stateTime, false);
+                    break;
+                default:
+                    Log.e("", new IllegalArgumentException());
             }
-            reset();
-        } else currentState = newState;
+        }
+
+        private void trackMovement(float delta) {
+            float movement = delta * speed;
+            body.setLinearVelocity(currentVelocity.cpy().scl(movement));
+            this.setPosition(body.getPosition().x - 32 / 2f - 10, body.getPosition().y - 32 / 2f);
+        }
+
+        public void updatePlayerState(PlayerState newState, Vector2 newVelocity) {
+            currentVelocity = newVelocity;
+            body.setLinearVelocity(currentVelocity);
+            if (newState == null) {
+                switch (currentState) {
+                    case WALKING_N:
+                        currentState = PlayerState.STANDING_N;
+                        break;
+                    case WALKING_S:
+                        currentState = PlayerState.STANDING_S;
+                        break;
+                    case WALKING_NE:
+                    case WALKING_SE:
+                    case WALKING_E:
+                        currentState = PlayerState.STANDING_E;
+                        break;
+                    case WALKING_NW:
+                    case WALKING_SW:
+                    case WALKING_W:
+                        currentState = PlayerState.STANDING_W;
+                        break;
+                }
+                reset();
+            } else currentState = newState;
+        }
+
+        @Override
+        public void act(float delta) {
+            super.act(delta);
+            stateTime += Gdx.graphics.getDeltaTime();
+        }
+
+        public void setTime(float time) {
+            stateTime = time;
+        }
+
+        public void reset() {
+            setTime(0f);
+        }
+
+        @Override
+        public void draw(Batch batch, float parentAlpha) {
+            get_State();
+            sprite.setRegion(currentFrame);
+            sprite.setPosition(getX(), getY());
+            sprite.draw(batch);
+        }
+
     }
 }

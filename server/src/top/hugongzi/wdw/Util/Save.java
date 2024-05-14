@@ -2,11 +2,10 @@ package top.hugongzi.wdw.Util;
 
 import com.badlogic.gdx.utils.Json;
 import top.hugongzi.wdw.entity.Player.Player;
-import top.hugongzi.wdw.entity.Player.PlayerData;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 
 public class Save {
@@ -16,7 +15,7 @@ public class Save {
         for (String dir : dirs) {
             File d = new File(dir);
             if (d.mkdir()) {
-                System.out.println(dir + "not found,created.");
+                System.out.println(dir + " not found,created.");
             }
         }
     }
@@ -25,39 +24,36 @@ public class Save {
         String dir = "users/" + id.charAt(0) + "/";
         File d = new File(dir);
         if (d.mkdir()) {
-            System.out.println(dir + "not found,created.");
+            System.out.println(dir + " not found,created.");
             return null;
         }
         dir += id + ".json";
         File save = new File(dir);
         if (!save.exists()) {
-            System.out.println(dir + "not found,please check.");
+            System.out.println(dir + " not found.");
             return null;
         }
-        FileInputStream fis;
-        StringBuilder stringBuilder = new StringBuilder();
-        try {
-            fis = new FileInputStream(save);
-            byte[] bys = new byte[100];
-            while (fis.read(bys, 0, bys.length) != -1) {
-                stringBuilder.append(new String(bys));
+        StringBuilder jsonData = new StringBuilder();
+        try (FileReader reader = new FileReader(dir)) {
+            int character;
+            while ((character = reader.read()) != -1) {
+                jsonData.append((char) character);
             }
-            fis.close();
         } catch (IOException e) {
-            System.out.println(e);
+            e.printStackTrace();
         }
+
         Json json = new Json();
-        return json.fromJson(Player.class, stringBuilder.toString());
+        return json.fromJson(Player.class, jsonData.toString());
     }
 
     public void saveplayer(Player player) {
         String dir = "users/";
-        PlayerData data = player.getPlayerData();
-        File alphaname = new File(dir + data.getId().charAt(0));
+        File alphaname = new File(dir + player.getId().charAt(0));
         if (alphaname.mkdir()) {
-            System.out.println(dir + "not found,created.");
+            System.out.println(dir + " not found,created.");
         }
-        dir += data.getId().charAt(0) + "/" + data.getId() + ".json";
+        dir += player.getId().charAt(0) + "/" + player.getId() + ".json";
         File file = new File(dir);
         if (!file.exists()) {
             try {
@@ -70,8 +66,8 @@ public class Save {
         try {
             fos = new FileOutputStream(file);
             Json json = new Json();
-            json.toJson(player);
-            fos.write(json.toString().getBytes());
+            String jsonData = json.toJson(player);
+            fos.write(jsonData.getBytes());
             fos.close();
         } catch (IOException e) {
             System.out.println(e);

@@ -41,21 +41,17 @@ public class WDWserver {
                 long now = System.nanoTime();
                 long sleeptime = 16 - (now - then) / 1000000L;
 
-                // 保证休眠时间在10毫秒以上
                 if (sleeptime > 0 && sleeptime < 10) {
                     sleeptime = 10;
                 }
 
-                // 同步锁定，休眠等待
                 synchronized (lock) {
                     lock.wait(sleeptime);
                 }
             } catch (InterruptedException e) {
-                // 中断异常处理，清理现场并退出循环
                 Thread.currentThread().interrupt();
                 break;
             } catch (Exception e) {
-                // 通用异常处理，输出错误信息
                 System.err.println("Error in ticker loop: " + e.getMessage());
             }
         }

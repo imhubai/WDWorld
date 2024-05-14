@@ -27,7 +27,7 @@ public class FreeRoamingMovementListener extends InputListener {
             return false;
         }
         Vector2 newVelocity = state.calculateDirectionVector();
-        player.updatePlayerState(state, newVelocity);
+        //player.updatePlayerState(state, newVelocity);
         return true;
     }
 
@@ -39,7 +39,7 @@ public class FreeRoamingMovementListener extends InputListener {
         if (state != null) {
             newVelocity = state.calculateDirectionVector();
         }
-        player.updatePlayerState(state, newVelocity);
+        //player.updatePlayerState(state, newVelocity);
         return true;
     }
 

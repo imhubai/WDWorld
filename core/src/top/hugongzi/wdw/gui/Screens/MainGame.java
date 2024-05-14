@@ -2,10 +2,10 @@ package top.hugongzi.wdw.gui.Screens;
 
 import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import top.hugongzi.wdw.GameEntry;
@@ -62,9 +62,7 @@ public class MainGame extends AbstractScreen {
     public void create() {
         stage = GameEntry.stage();
 
-        Group overlap = new Group();
-        info = GameGUI.label_Default("", 1000, 1000);
-        //overlap.addActor(info);
+        info = GameGUI.label("", 1000, 1000, "cubic20", Color.WHITE);
         stage.addActor(info);
         try {
             tryConnect();
@@ -73,10 +71,11 @@ public class MainGame extends AbstractScreen {
         }
         camera = (OrthographicCamera) stage.getCamera();
         camera.zoom = 0.5f;
-        LoginMessage loginMessage=new LoginMessage();
-        loginMessage.setId("dream");
+
+        LoginMessage loginMessage = new LoginMessage();
+        loginMessage.setId(username);
         client.sendUDP(loginMessage);
-        loadGameMap("Maps/map003.tmx", this.stage);
+        //loadGameMap("Maps/map003.tmx", this.stage);
 
         //player = new Player(new Vector2(640f, 640f), gameMap.getWorld());
         //stage.addActor(player);
@@ -100,15 +99,15 @@ public class MainGame extends AbstractScreen {
 
     @Override
     public void draw() {
-        gameMap.draw();
+        //gameMap.draw();
         stage.draw();
-        rayHandler.prepareRender();
-        rayHandler.updateAndRender();
+        //rayHandler.prepareRender();
+        //rayHandler.updateAndRender();
     }
 
     private void updateCamera() {
-        camera.position.x = player.getX() + player.getWidth() / 2;
-        camera.position.y = player.getY() + player.getHeight() / 2;
+        camera.position.x = player.getX();
+        camera.position.y = player.getY();
 
         TiledMapTileLayer layer = (TiledMapTileLayer) gameMap.getMap().getLayers().get(0);
 
@@ -129,7 +128,7 @@ public class MainGame extends AbstractScreen {
         delta += Gdx.graphics.getDeltaTime();
         stage.act();
         //updateCamera();
-        rayHandler.setCombinedMatrix(camera);
+        //rayHandler.setCombinedMatrix(camera);
         //player.act(delta);
         info.setText("FPS:" + Gdx.graphics.getFramesPerSecond() + "\n" +
                 "Delta:" + delta + "\n" +
@@ -168,7 +167,14 @@ public class MainGame extends AbstractScreen {
 
     @Override
     public void dispose() {
-        rayHandler.dispose();
+        //rayHandler.dispose();
+    }
+
+    public void registerPlayer(Player player) {
+        NewbieMessage newbieMessage = new NewbieMessage();
+        newbieMessage.setId(username);
+        newbieMessage.setPlayer(player);
+        client.sendUDP(newbieMessage);
     }
 
     public void loginReceieved(LoginMessage m) {
@@ -176,6 +182,10 @@ public class MainGame extends AbstractScreen {
     }
 
     public void newbieReceieved(NewbieMessage m) {
-        Log.i("newbie?");
+        Log.i("MainGame - There is no playerdata, jump to create character.");
+        ScreenCreateCharacter screenCreateCharacter = new ScreenCreateCharacter(this);
+        screenCreateCharacter.create();
+        GameEntry.addScreen(screenCreateCharacter);
+        this.remove();
     }
 }

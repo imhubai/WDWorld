@@ -93,6 +93,8 @@ project(":server") {
         api "com.badlogicgames.gdx:gdx-bullet:$gdxVersion"
         api "com.esotericsoftware:kryonet:2.22.0-RC1"
         api 'com.badlogicgames.gdx:gdx-backend-headless:1.12.1'
-
+        api 'org.apache.logging.log4j:log4j-api:2.20.0'
+        api 'org.apache.logging.log4j:log4j-core:2.20.0'
+        api 'org.apache.logging.log4j:log4j-slf4j-impl:2.20.0'
     }
 }

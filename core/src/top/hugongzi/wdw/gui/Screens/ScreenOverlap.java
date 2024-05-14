@@ -1,6 +1,7 @@
 package top.hugongzi.wdw.gui.Screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import top.hugongzi.wdw.GameEntry;
@@ -15,7 +16,7 @@ public class ScreenOverlap extends AbstractScreen {
     public void create() {
         stage = GameEntry.stage();
         Group overlap = new Group();
-        info = GameGUI.label_Default("", 0, GameEntry.GAMEHEIGHT - 300);
+        info = GameGUI.label("", 0, GameEntry.GAMEHEIGHT - 300, "cubic20", Color.WHITE);
         overlap.addActor(info);
         stage.addActor(overlap);
     }

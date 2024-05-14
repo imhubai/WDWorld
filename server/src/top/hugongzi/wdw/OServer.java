@@ -1,20 +1,21 @@
 package top.hugongzi.wdw;
 
+import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
 import top.hugongzi.wdw.Messages.*;
+import top.hugongzi.wdw.entity.Player.Player;
+import top.hugongzi.wdw.entity.Player.PlayerState;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
 
 /**
  * OServer 类负责处理服务器的初始化、消息注册、消息接收与分发。
  *
- * @param serverConnection 服务器连接管理对象，用于处理登录、登出和玩家移动消息。
- * @param tcpPORT          TCP端口号
- * @param udpPORT          UDP端口号
  */
 public class OServer {
 
@@ -36,7 +37,7 @@ public class OServer {
         this.serverConnection = serverConnection;
         this.tcpPORT = tcpPORT;
         this.udpPORT = udpPORT;
-
+        messageListener = serverConnection;
         init();
     }
 
@@ -48,7 +49,6 @@ public class OServer {
         registerClasses();
         messageQueue = new LinkedList<>();
         connectionQueue = new LinkedList<>();
-        messageListener = serverConnection;
 
         // 添加监听器处理接收的消息
         server.addListener(new Listener() {
@@ -79,11 +79,13 @@ public class OServer {
         for (int i = 0; i < messageQueue.size(); i++) {
             Connection con = connectionQueue.poll();
             Object message = messageQueue.poll();
-
             // 根据消息类型分发处理
             if (message instanceof LoginMessage) {
                 LoginMessage m = (LoginMessage) message;
                 messageListener.loginReceived(con, m);
+            } else if (message instanceof NewbieMessage) {
+                NewbieMessage m = (NewbieMessage) message;
+                messageListener.newPlayerReceived(m);
             } else if (message instanceof LogoutMessage) {
                 LogoutMessage m = (LogoutMessage) message;
                 messageListener.logoutReceived(m);
@@ -104,6 +106,10 @@ public class OServer {
         this.server.getKryo().register(PositionMessage.class);
         this.server.getKryo().register(PositionMessage.DIRECTION.class);
         this.server.getKryo().register(NewbieMessage.class);
+        this.server.getKryo().register(Player.class);
+        this.server.getKryo().register(PlayerState.class);
+        this.server.getKryo().register(Vector2.class);
+        this.server.getKryo().register(ArrayList.class);
 
         this.server.getKryo().register(float[].class);
     }

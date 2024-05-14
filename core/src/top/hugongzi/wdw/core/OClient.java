@@ -1,10 +1,13 @@
 package top.hugongzi.wdw.core;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import top.hugongzi.wdw.Messages.*;
+import top.hugongzi.wdw.entity.Player.Player;
+import top.hugongzi.wdw.entity.Player.PlayerState;
 import top.hugongzi.wdw.gui.Screens.MainGame;
 
 import java.io.IOException;
@@ -44,7 +47,6 @@ public class OClient {
                     if (object instanceof LoginMessage) {
                         LoginMessage m = (LoginMessage) object;
                         OClient.this.game.loginReceieved(m);
-
                     } else if (object instanceof LogoutMessage) {
                         LogoutMessage m = (LogoutMessage) object;
                         //OClient.this.game.logoutReceieved(m);
@@ -71,6 +73,9 @@ public class OClient {
         this.client.getKryo().register(PositionMessage.class);
         this.client.getKryo().register(PositionMessage.DIRECTION.class);
         this.client.getKryo().register(NewbieMessage.class);
+        this.client.getKryo().register(Player.class);
+        this.client.getKryo().register(PlayerState.class);
+        this.client.getKryo().register(Vector2.class);
         // primitive arrays
         this.client.getKryo().register(float[].class);
 

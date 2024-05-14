@@ -2,6 +2,7 @@ package top.hugongzi.wdw.gui.Screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.net.HttpRequestBuilder;
@@ -39,22 +40,12 @@ public class ScreenLogin extends AbstractScreen {
     String username, password, name, email;
     int basewidth = GameEntry.GAMEWIDTH / 5 * 3, baseheight = 0;
     List<TextButton> serverbtnlist = new ArrayList<>();
-    boolean drawheroimg = true, singlegamelock =true;
+    boolean drawheroimg = true, singlegamelock = true;
 
     @Override
     public void create() {
+        resolution();
         Log.i(CLASSNAME + " -> create()");
-        if (GameEntry.GAMEWIDTH <= 800) {
-            Log.e("Doesn't support 800*n or lower des.");
-            Gdx.graphics.setWindowedMode(1024, 720);
-            basewidth = 1024 / 4;
-            drawheroimg = false;
-        } else if (GameEntry.GAMEWIDTH <= 1024) {
-            basewidth = GameEntry.GAMEWIDTH / 5 * 3;
-            drawheroimg = false;
-        } else if (GameEntry.GAMEWIDTH >= 1920) {
-            basewidth = GameEntry.GAMEWIDTH / 4 * 3;
-        }
         stage = GameEntry.stage();
         page.put("login", new Group());
         page.put("register", new Group());
@@ -72,15 +63,29 @@ public class ScreenLogin extends AbstractScreen {
         stage.addActor(root);
     }
 
+    private void resolution() {
+        if (GameEntry.GAMEWIDTH <= 800) {
+            Log.e("Doesn't support 800*n or lower des.");
+            Gdx.graphics.setWindowedMode(1024, 720);
+            basewidth = 1024 / 4;
+            drawheroimg = false;
+        } else if (GameEntry.GAMEWIDTH <= 1024) {
+            basewidth = GameEntry.GAMEWIDTH / 5 * 3;
+            drawheroimg = false;
+        } else if (GameEntry.GAMEWIDTH >= 1920) {
+            basewidth = GameEntry.GAMEWIDTH / 4 * 3;
+        }
+    }
+
     public void fun_page(String pagename) {
         switch (pagename) {
             case "msg":
                 page.get(pagename).setVisible(false);
                 List<Actor> list_msg = new ArrayList<>();
-                msglabel = GameGUI.label_Default("", GameEntry.GAMEWIDTH / 2 - basewidth - 100, GameEntry.GAMEHEIGHT / 2);
+                msglabel = GameGUI.label("", GameEntry.GAMEWIDTH / 2 - basewidth - 100, GameEntry.GAMEHEIGHT / 2, "cubic24", Color.WHITE);
                 list_msg.add(msglabel);
 
-                Button btn_msg_ok = GameGUI.TextBtn_Default("OK", GameEntry.GAMEWIDTH / 2 - basewidth - 100, GameEntry.GAMEHEIGHT / 2 - 100);
+                Button btn_msg_ok = GameGUI.textbtn_default("OK", GameEntry.GAMEWIDTH / 2 - basewidth - 100, GameEntry.GAMEHEIGHT / 2 - 100, "cubic24", Color.WHITE);
                 btn_msg_ok.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -95,13 +100,13 @@ public class ScreenLogin extends AbstractScreen {
                 page.get(pagename).setVisible(true);
                 List<Actor> list_other = new ArrayList<>();
                 String verlabel_s = "ver:" + GameEntry.GAMEVERSION + " Test Version Visit www.hugongzi.top";
-                Label verLabel = GameGUI.label_Default(verlabel_s, 0, 0);
+                Label verLabel = GameGUI.label(verlabel_s, 0, 0, "cubic20", Color.WHITE);
                 list_other.add(verLabel);
 
                 Texture hero = new Texture(Gdx.files.internal("Images/hero_index_login.png"));
                 Image image_hero = new Image(new TextureRegion(hero));
                 image_hero.setPosition((float) 10 - basewidth, 0);
-                image_hero.getColor().a=0;
+                image_hero.getColor().a = 0;
                 AlphaAction action_alpha = Actions.alpha(1F, 0.7F);
                 image_hero.addAction(action_alpha);
                 if (drawheroimg) list_other.add(image_hero);
@@ -112,28 +117,28 @@ public class ScreenLogin extends AbstractScreen {
                 page.get(pagename).setVisible(true);
                 List<Actor> list_login = new ArrayList<>();
 
-                Label label_login_title = GameGUI.label_Big("User Login", 10, 360);
+                Label label_login_title = GameGUI.label("User Login", 10, 360, "cubic32", Color.WHITE);
                 list_login.add(label_login_title);
 
-                TextField tf_login_password = GameGUI.Tf_Default("", 350, 48, 80, 200);
+                TextField tf_login_password = GameGUI.tf_default("", 350, 48, 80, 200, "cubic20", Color.WHITE);
                 tf_login_password.setPasswordMode(true);
                 tf_login_password.setPasswordCharacter((char) 61440);
                 tf_login_password.setMessageText("Input password");
                 tf_login_password.setText("123456");
                 list_login.add(tf_login_password);
 
-                TextField tf_login_username = GameGUI.Tf_Default("", 350, 48, 80, 280);
+                TextField tf_login_username = GameGUI.tf_default("", 350, 48, 80, 280, "cubic20", Color.WHITE);
                 tf_login_username.setMessageText("Input userid");
                 tf_login_username.setText("admin");
                 list_login.add(tf_login_username);
 
-                Label label_login_username = GameGUI.label_Default("account", 10, 290);
+                Label label_login_username = GameGUI.label("account", 10, 290, "cubic20", Color.WHITE);
                 list_login.add(label_login_username);
 
-                Label label_login_password = GameGUI.label_Default("password", 10, 210);
+                Label label_login_password = GameGUI.label("password", 10, 210, "cubic20", Color.WHITE);
                 list_login.add(label_login_password);
 
-                Button btn_login_login = GameGUI.TextBtn_Default("Login", 10, 100);
+                Button btn_login_login = GameGUI.textbtn_default("Login", 10, 100, "cubic24", Color.WHITE);
                 btn_login_login.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -146,7 +151,7 @@ public class ScreenLogin extends AbstractScreen {
                 });
                 list_login.add(btn_login_login);
 
-                Button btn_login_register = GameGUI.TextBtn_Default("Register", 220, 100);
+                Button btn_login_register = GameGUI.textbtn_default("Register", 220, 100, "cubic24", Color.WHITE);
                 btn_login_register.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -162,49 +167,49 @@ public class ScreenLogin extends AbstractScreen {
                 page.get(pagename).setVisible(false);
                 List<Actor> list_register = new ArrayList<>();
 
-                Label label_register_title = GameGUI.label_Big("User Register", 10, 620);
+                Label label_register_title = GameGUI.label("User Register", 10, 620, "cubic32", Color.WHITE);
                 list_register.add(label_register_title);
 
-                TextField tf_register_name = GameGUI.Tf_Default("", 320, 48, 80, 500);
+                TextField tf_register_name = GameGUI.tf_default("", 320, 48, 80, 500, "cubic20", Color.WHITE);
                 tf_register_name.setMessageText("Please input name");
                 list_register.add(tf_register_name);
 
-                Label label_register_name = GameGUI.label_Default("name", 10, 510);
+                Label label_register_name = GameGUI.label("name", 10, 510, "cubic20", Color.WHITE);
                 list_register.add(label_register_name);
 
-                TextField tf_register_username = GameGUI.Tf_Default("", 320, 48, 80, 420);
+                TextField tf_register_username = GameGUI.tf_default("", 320, 48, 80, 420, "cubic20", Color.WHITE);
                 tf_register_username.setMessageText("locase alpha,4-18 chars");
                 list_register.add(tf_register_username);
 
-                Label label_register_username = GameGUI.label_Default("account", 10, 430);
+                Label label_register_username = GameGUI.label("account", 10, 430, "cubic20", Color.WHITE);
                 list_register.add(label_register_username);
 
-                TextField tf_register_password = GameGUI.Tf_Default("", 320, 48, 80, 340);
+                TextField tf_register_password = GameGUI.tf_default("", 320, 48, 80, 340, "cubic20", Color.WHITE);
                 tf_register_password.setPasswordMode(true);
                 tf_register_password.setPasswordCharacter((char) 61440);
                 tf_register_password.setMessageText("Input password");
                 list_register.add(tf_register_password);
 
-                Label label_register_password = GameGUI.label_Default("password", 10, 350);
+                Label label_register_password = GameGUI.label("password", 10, 350, "cubic20", Color.WHITE);
                 list_register.add(label_register_password);
 
-                TextField tf_register_password2 = GameGUI.Tf_Default("", 320, 48, 80, 260);
+                TextField tf_register_password2 = GameGUI.tf_default("", 320, 48, 80, 260, "cubic20", Color.WHITE);
                 tf_register_password2.setPasswordMode(true);
                 tf_register_password2.setPasswordCharacter((char) 61440);
                 tf_register_password2.setMessageText("Input password again");
                 list_register.add(tf_register_password2);
 
-                Label label_register_password2 = GameGUI.label_Default("verify", 10, 270);
+                Label label_register_password2 = GameGUI.label("verify", 10, 270, "cubic20", Color.WHITE);
                 list_register.add(label_register_password2);
 
-                TextField tf_register_email = GameGUI.Tf_Default("", 320, 48, 80, 180);
+                TextField tf_register_email = GameGUI.tf_default("", 320, 48, 80, 180, "cubic20", Color.WHITE);
                 tf_register_email.setMessageText("input email");
                 list_register.add(tf_register_email);
 
-                Label label_register_email = GameGUI.label_Default("email", 10, 190);
+                Label label_register_email = GameGUI.label("email", 10, 190, "cubic20", Color.WHITE);
                 list_register.add(label_register_email);
 
-                Label btn_register_back = GameGUI.label_Default("back", 80, 90);
+                Label btn_register_back = GameGUI.label("back", 80, 90, "cubic24", Color.WHITE);
                 btn_register_back.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -213,7 +218,7 @@ public class ScreenLogin extends AbstractScreen {
                 });
                 list_register.add(btn_register_back);
 
-                Button btn_register = GameGUI.TextBtn_Default("Register", 220, 80);
+                Button btn_register = GameGUI.textbtn_default("Register", 220, 80, "cubic24", Color.WHITE);
                 btn_register.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -237,9 +242,9 @@ public class ScreenLogin extends AbstractScreen {
             case "server":
                 page.get(pagename).setVisible(false);
                 List<Actor> list_server = new ArrayList<>();
-                label_server_title = GameGUI.label_Big("welcome", 10, 620);
+                label_server_title = GameGUI.label("welcome", 10, 620, "cubic32", Color.WHITE);
                 list_server.add(label_server_title);
-                Label label_server_change = GameGUI.label_Default("Change info", 10, 580);
+                Label label_server_change = GameGUI.label("Change info", 10, 580, "cubic20", Color.YELLOW);
                 label_server_change.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -248,7 +253,7 @@ public class ScreenLogin extends AbstractScreen {
                 });
                 list_server.add(label_server_change);
 
-                Label label_server_off = GameGUI.label_Default("Exit account", 150, 580);
+                Label label_server_off = GameGUI.label("Exit account", 150, 580, "cubic20", Color.YELLOW);
 
                 label_server_off.addListener(new ClickListener() {
                     @Override
@@ -258,36 +263,36 @@ public class ScreenLogin extends AbstractScreen {
                 });
                 list_server.add(label_server_off);
 
-                Label label_server_listtitle = GameGUI.label_Default("Server List", 10, 520);
+                Label label_server_listtitle = GameGUI.label("Server List", 10, 520, "cubic20", Color.WHITE);
                 list_server.add(label_server_listtitle);
-                serverbtnlist.add(GameGUI.TextBtn_Default("", 10, 500 - 50));
-                serverbtnlist.add(GameGUI.TextBtn_Default("", 10, 500 - 110));
-                serverbtnlist.add(GameGUI.TextBtn_Default("", 10, 500 - 170));
-                serverbtnlist.add(GameGUI.TextBtn_Default("", 10, 500 - 230));
+                serverbtnlist.add(GameGUI.textbtn_default("", 10, 500 - 50, "cubic24", Color.WHITE));
+                serverbtnlist.add(GameGUI.textbtn_default("", 10, 500 - 110, "cubic24", Color.WHITE));
+                serverbtnlist.add(GameGUI.textbtn_default("", 10, 500 - 170, "cubic24", Color.WHITE));
+                serverbtnlist.add(GameGUI.textbtn_default("", 10, 500 - 230, "cubic24", Color.WHITE));
                 for (Actor a : list_server) page.get(pagename).addActor(a);
                 return;
             case "change":
                 page.get(pagename).setVisible(false);
                 List<Actor> list_change = new ArrayList<>();
 
-                Label label_change_title = GameGUI.label_Big("Change", 10, 620);
+                Label label_change_title = GameGUI.label("Change", 10, 620, "cubic32", Color.WHITE);
                 list_change.add(label_change_title);
 
-                TextField tf_change_newpwd = GameGUI.Tf_Default("", 320, 48, 80, 500);
+                TextField tf_change_newpwd = GameGUI.tf_default("", 320, 48, 80, 500, "cubic20", Color.WHITE);
                 tf_change_newpwd.setMessageText("new password(not change without modification)");
                 list_change.add(tf_change_newpwd);
 
-                Label label_change_newpwd = GameGUI.label_Default("password", 10, 510);
+                Label label_change_newpwd = GameGUI.label("password", 10, 510, "cubic20", Color.WHITE);
                 list_change.add(label_change_newpwd);
 
-                TextField tf_change_newemail = GameGUI.Tf_Default("", 320, 48, 80, 420);
+                TextField tf_change_newemail = GameGUI.tf_default("", 320, 48, 80, 420, "cubic20", Color.WHITE);
                 tf_change_newemail.setMessageText("new email(not change without modification)");
                 list_change.add(tf_change_newemail);
 
-                Label label_change_newemail = GameGUI.label_Default("email", 10, 430);
+                Label label_change_newemail = GameGUI.label("email", 10, 430, "cubic20", Color.WHITE);
                 list_change.add(label_change_newemail);
 
-                Label btn_change_back = GameGUI.label_Default("back", 80, 90);
+                Label btn_change_back = GameGUI.label("back", 80, 90, "cubic20", Color.WHITE);
                 btn_change_back.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -296,7 +301,7 @@ public class ScreenLogin extends AbstractScreen {
                 });
                 list_change.add(btn_change_back);
 
-                Button btn_change = GameGUI.TextBtn_Default("提交", 220, 80);
+                Button btn_change = GameGUI.textbtn_default("Submit", 220, 80, "cubic24", Color.WHITE);
                 btn_change.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
@@ -503,10 +508,10 @@ public class ScreenLogin extends AbstractScreen {
     }
 
     private void startGame(String serverName) {
-        GameEntry.maingame = MainGame.getInstance(gameurl.get(serverName), serverName, phpserverurl,username,name);
-        if(singlegamelock){
+        GameEntry.maingame = MainGame.getInstance(gameurl.get(serverName), serverName, phpserverurl, username, name);
+        if (singlegamelock) {
             GameEntry.addScreen(GameEntry.maingame);
-            singlegamelock =false;
+            singlegamelock = false;
         }
     }
 }

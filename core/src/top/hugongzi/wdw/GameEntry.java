@@ -28,7 +28,7 @@ import java.util.List;
 public class GameEntry extends Game implements InputProcessor {
     public static String CLASSNAME = GameEntry.class.getSimpleName();
     public static String GAMENAME = "wdw";
-    public static String GAMEVERSION = "t0.3.7";
+    public static String GAMEVERSION = "t0.3.8";
     public static int GAMEWIDTH, GAMEHEIGHT;
 
     public static SpriteBatch batch;
@@ -40,6 +40,7 @@ public class GameEntry extends Game implements InputProcessor {
     private static InputMultiplexer inputMultiplexer;
 
     private static List<AbstractScreen> screens = new ArrayList<>();
+
     /**
      * 将新屏幕加入待渲染列表，等待下一帧渲染
      *
@@ -90,8 +91,6 @@ public class GameEntry extends Game implements InputProcessor {
         Log.i("GAME WIDTH:" + GAMEWIDTH + " GAME HEIGHT:" + GAMEHEIGHT);
         inputMultiplexer = new InputMultiplexer();
         Gdx.input.setInputProcessor(inputMultiplexer);
-
-        // 初始化初始屏幕
         screenSplash = new ScreenSplash(this);
         screenSplash.create();
         addScreen(screenSplash);

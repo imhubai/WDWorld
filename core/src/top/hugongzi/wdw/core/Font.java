@@ -14,22 +14,21 @@ import top.hugongzi.wdw.lazyfont.LazyBitmapFont;
 public class Font {
     // 字体资源映射，通过字符串标识访问不同大小的字体
     private final ArrayMap<String, BitmapFont> map = new ArrayMap<>();
+    String fontPath = "Fonts/Cubic.ttf";
 
     /**
      * 构造函数，初始化字体资源。
      * 此处加载了基于Cubic.ttf字体文件的多种大小的字体，供后续使用。
      */
     public Font() {
-        String fontPath = "Fonts/Cubic.ttf";
         Log.i("FontInit << " + fontPath);
-        // 使用FreeTypeFontGenerator从字体文件生成字体
+        int[] sizes = {16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 48, 64, 128};
+        for (int s : sizes) putFont(s);
+    }
+
+    public void putFont(int size) {
         FreeTypeFontGenerator freeTypeFontGenerator = new FreeTypeFontGenerator(Gdx.files.internal(fontPath));
-        // 添加不同大小的字体到映射中
-        map.put("cubic16", new LazyBitmapFont(freeTypeFontGenerator, 16));
-        map.put("cubic18", new LazyBitmapFont(freeTypeFontGenerator, 18));
-        map.put("cubic20", new LazyBitmapFont(freeTypeFontGenerator, 20));
-        map.put("cubic22", new LazyBitmapFont(freeTypeFontGenerator, 22));
-        map.put("cubic32", new LazyBitmapFont(freeTypeFontGenerator, 32));
+        map.put("cubic" + size, new LazyBitmapFont(freeTypeFontGenerator, size));
     }
 
     /**

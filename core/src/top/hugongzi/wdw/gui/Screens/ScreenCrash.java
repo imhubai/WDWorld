@@ -1,5 +1,6 @@
 package top.hugongzi.wdw.gui.Screens;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import top.hugongzi.wdw.GameEntry;
 import top.hugongzi.wdw.gui.Buttons.GameGUI;
@@ -10,7 +11,7 @@ public class ScreenCrash extends AbstractScreen {
     @Override
     public void create() {
         stage = GameEntry.stage();
-        crashLabel = GameGUI.label_Big(" :(\n崩溃啦，请检查业务逻辑", 0, 0);
+        crashLabel = GameGUI.label(" :(\n崩溃啦，请检查业务逻辑", 0, 0, "cubic20", Color.WHITE);
         stage.addActor(crashLabel);
     }
 

@@ -18,4 +18,5 @@ public interface MessageListener {
      */
     public void playerMovedReceived(PositionMessage move);
 
+    public void newPlayerReceived(NewbieMessage m);
 }

@@ -1,15 +1,17 @@
 package top.hugongzi.wdw.Messages;
 
+import top.hugongzi.wdw.entity.Player.Player;
+
 public class NewbieMessage {
     private String id;
-    private String name;
+    private Player player;
 
-    public String getName() {
-        return name;
+    public Player getPlayer() {
+        return player;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     public String getId() {
