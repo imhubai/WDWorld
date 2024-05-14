@@ -16,11 +16,11 @@ declare(strict_types=1);
 
 namespace Medoo;
 
-use PDO;
 use Exception;
+use InvalidArgumentException;
+use PDO;
 use PDOException;
 use PDOStatement;
-use InvalidArgumentException;
 
 /**
  * The Medoo raw object.
