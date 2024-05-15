@@ -4,6 +4,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
+import top.hugongzi.wdw.GameEntry;
 import top.hugongzi.wdw.entity.Player.Player;
 import top.hugongzi.wdw.entity.Player.PlayerState;
 
@@ -27,20 +28,29 @@ public class FreeRoamingMovementListener extends InputListener {
             return false;
         }
         Vector2 newVelocity = state.calculateDirectionVector();
-        //player.updatePlayerState(state, newVelocity);
+        player.getPlayerActor().updatePlayerState(state, newVelocity);
+        GameEntry.maingame.moved();
         return true;
     }
 
     @Override
     public boolean keyUp(InputEvent event, int keycode) {
         pressedKeyCodes.remove(keycode);
+        KeyUpUpdate();
+        return true;
+    }
+
+    private void KeyUpUpdate() {
         PlayerState state = getPlayerStateBasedOnCurrentlyPressedKeys();
         Vector2 newVelocity = Vector2.Zero;
         if (state != null) {
             newVelocity = state.calculateDirectionVector();
+            player.getPlayerActor().updatePlayerState(state, newVelocity);
+            GameEntry.maingame.moved();
+            return;
         }
-        //player.updatePlayerState(state, newVelocity);
-        return true;
+        player.getPlayerActor().updatePlayerState(state, newVelocity);
+        GameEntry.maingame.stoped();
     }
 
     private PlayerState getPlayerStateBasedOnCurrentlyPressedKeys() {

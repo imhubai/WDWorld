@@ -2,22 +2,25 @@ package top.hugongzi.wdw.gui.Screens;
 
 import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import top.hugongzi.wdw.GameEntry;
-import top.hugongzi.wdw.Messages.LoginMessage;
-import top.hugongzi.wdw.Messages.NewbieMessage;
+import top.hugongzi.wdw.Messages.*;
 import top.hugongzi.wdw.core.GameMap;
 import top.hugongzi.wdw.core.Log;
 import top.hugongzi.wdw.core.OClient;
+import top.hugongzi.wdw.core.Util;
 import top.hugongzi.wdw.entity.Player.Player;
-import top.hugongzi.wdw.gui.Buttons.GameGUI;
+import top.hugongzi.wdw.listener.CameraListener;
+import top.hugongzi.wdw.listener.FreeRoamingMovementListener;
 
 import java.io.IOException;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Objects;
 
 public class MainGame extends AbstractScreen {
     private static volatile MainGame instance;
@@ -26,13 +29,15 @@ public class MainGame extends AbstractScreen {
     private final String phpserverurl;
     private final String username;
     private final String name;
-    OrthographicCamera camera;
+    Hashtable<String, Player> serverplayers;
     GameMap gameMap;
-    Label info;
     RayHandler rayHandler;
     OClient client;
     float delta = 0;
     Player player;
+    boolean ismaprender = false;
+    private
+    OrthographicCamera camera;
 
     private MainGame(String serverAddress, String serverName, String phpserverurl, String username, String name) {
         this.serverAddress = serverAddress;
@@ -41,6 +46,7 @@ public class MainGame extends AbstractScreen {
         this.phpserverurl = phpserverurl;
         this.username = username;
         this.name = name;
+        serverplayers = new Hashtable<>();
         this.create();
         GameEntry.screenSplash.remove();
         GameEntry.screenLogin.remove();
@@ -61,9 +67,6 @@ public class MainGame extends AbstractScreen {
     @Override
     public void create() {
         stage = GameEntry.stage();
-
-        info = GameGUI.label("", 1000, 1000, "cubic20", Color.WHITE);
-        stage.addActor(info);
         try {
             tryConnect();
         } catch (IOException e) {
@@ -75,20 +78,17 @@ public class MainGame extends AbstractScreen {
         LoginMessage loginMessage = new LoginMessage();
         loginMessage.setId(username);
         client.sendUDP(loginMessage);
-        //loadGameMap("Maps/map003.tmx", this.stage);
-
-        //player = new Player(new Vector2(640f, 640f), gameMap.getWorld());
-        //stage.addActor(player);
-        //stage.addListener(new FreeRoamingMovementListener(player));
-        //stage.addListener(new CameraListener(camera));
     }
 
     private void loadGameMap(String map, Stage stage) {
+        Log.i("Loading game map " + map);
         gameMap = new GameMap(map, stage);
         rayHandler = new RayHandler(gameMap.getWorld());
         rayHandler.setAmbientLight(1f, 1f, 1f, 1f);
         rayHandler.setBlurNum(1);
         rayHandler.setShadows(true);
+        addClientPlayer();
+        ismaprender = true;
     }
 
     public void tryConnect() throws IOException {
@@ -99,15 +99,17 @@ public class MainGame extends AbstractScreen {
 
     @Override
     public void draw() {
-        //gameMap.draw();
+        if (ismaprender) {
+            gameMap.draw();
+            rayHandler.prepareRender();
+            rayHandler.updateAndRender();
+        }
         stage.draw();
-        //rayHandler.prepareRender();
-        //rayHandler.updateAndRender();
     }
 
     private void updateCamera() {
-        camera.position.x = player.getX();
-        camera.position.y = player.getY();
+        camera.position.x = player.getX() + player.getPlayerActor().getWidth() / 2;
+        camera.position.y = player.getY() + player.getPlayerActor().getHeight() / 2;
 
         TiledMapTileLayer layer = (TiledMapTileLayer) gameMap.getMap().getLayers().get(0);
 
@@ -127,12 +129,10 @@ public class MainGame extends AbstractScreen {
     public void act() {
         delta += Gdx.graphics.getDeltaTime();
         stage.act();
-        //updateCamera();
-        //rayHandler.setCombinedMatrix(camera);
-        //player.act(delta);
-        info.setText("FPS:" + Gdx.graphics.getFramesPerSecond() + "\n" +
-                "Delta:" + delta + "\n" +
-                "UncompressedMem:" + Gdx.app.getJavaHeap() / 80000 + " MB" + "\n");
+        if (ismaprender) {
+            updateCamera();
+            rayHandler.setCombinedMatrix(camera);
+        }
     }
 
     @Override
@@ -165,9 +165,36 @@ public class MainGame extends AbstractScreen {
 
     }
 
+    public void moved() {
+        PlayerMovedMessage playerMovedMessage = new PlayerMovedMessage();
+        playerMovedMessage.setPlayerid(username);
+        playerMovedMessage.setMap(player.getMap());
+        playerMovedMessage.setCurrentState(player.getCurrentState());
+        playerMovedMessage.setCurrentVelocity(player.getCurrentVelocity());
+        playerMovedMessage.setX(player.getX());
+        playerMovedMessage.setY(player.getY());
+        client.sendTCP(playerMovedMessage);
+    }
+
+    public void stoped() {
+        PlayerMovedMessage playerMovedMessage = new PlayerMovedMessage();
+        playerMovedMessage.setPlayerid(username);
+        playerMovedMessage.setMap(player.getMap());
+        playerMovedMessage.setCurrentState(player.getCurrentState());
+        playerMovedMessage.setCurrentVelocity(player.getCurrentVelocity());
+        playerMovedMessage.setX(player.getX());
+        playerMovedMessage.setY(player.getY());
+        client.sendTCP(playerMovedMessage);
+    }
+
     @Override
     public void dispose() {
-        //rayHandler.dispose();
+        if (ismaprender) {
+            rayHandler.dispose();
+        }
+        LogoutMessage logoutMessage = new LogoutMessage();
+        logoutMessage.setId(username);
+        client.sendUDP(logoutMessage);
     }
 
     public void registerPlayer(Player player) {
@@ -178,7 +205,20 @@ public class MainGame extends AbstractScreen {
     }
 
     public void loginReceieved(LoginMessage m) {
-        Log.i("login?");
+        player = m.getPlayer();
+        loadGameMap(player.getMap(), stage);
+    }
+
+    public void addClientPlayer() {
+        player.setPlayerActor(new Vector2(player.getX(), player.getY()), gameMap.getWorld());
+        stage.addActor(player.getPlayerActor().get());
+        stage.addListener(new FreeRoamingMovementListener(player));
+        stage.addListener(new CameraListener(camera));
+    }
+
+    public void addPlayer(Player OnlineServerPlayer) {
+        OnlineServerPlayer.setPlayerActor(new Vector2(OnlineServerPlayer.getX(), OnlineServerPlayer.getY()), gameMap.getWorld());
+        stage.addActor(OnlineServerPlayer.getPlayerActor().get());
     }
 
     public void newbieReceieved(NewbieMessage m) {
@@ -187,5 +227,35 @@ public class MainGame extends AbstractScreen {
         screenCreateCharacter.create();
         GameEntry.addScreen(screenCreateCharacter);
         this.remove();
+    }
+
+    public void chatReceieved(ChatMessage m) {
+        Log.i("received " + m.getMsg());
+    }
+
+    public void logoutReceieved(LogoutMessage m) {
+        Log.i("logouted!!");
+    }
+
+    public void worldMessageReceieved(WorldMessage m) {
+        List<Player> playermap = m.getPlayermap();
+        for (Player i : playermap) {
+            if (i != null && player != null) {
+                if (!Objects.equals(i.getId(), player.getId()) && !serverplayers.containsKey(i.getId()) && Objects.equals(player.getMap(), i.getMap())) {
+                    serverplayers.put(i.getId(), i);
+                    addPlayer(i);
+                    Log.i(i.getId() + " entered!");
+                } else if (!Objects.equals(i.getId(), player.getId()) && serverplayers.containsKey(i.getId()) && Objects.equals(player.getMap(), i.getMap())) {
+                    serverplayers.get(i.getId()).setX(i.getX());
+                    serverplayers.get(i.getId()).setY(i.getY());
+                    serverplayers.get(i.getId()).getPlayerActor().updatePlayerState(i.getCurrentState(), i.getCurrentState().calculateDirectionVector());
+                    serverplayers.get(i.getId()).getPlayerActor().setPosition(i.getX(), i.getY());
+                } else if (Objects.equals(i.getId(), player.getId())) {
+                    if (!Util.equalsEpsilon(i.getX(), player.getX(), 0.01f)) {
+                        moved();
+                    }
+                }
+            }
+        }
     }
 }

@@ -1,6 +1,4 @@
 # WDWorld
-[![Java CI with Gradle](https://github.com/imhubai/WDWorld/actions/workflows/gradle.yml/badge.svg)](https://github.com/imhubai/WDWorld/actions/workflows/gradle.yml)
-
 A 2D RPG game with [Libgdx Engine](https://github.com/libgdx/libgdx) using Java.
 
 使用的框架和工具:

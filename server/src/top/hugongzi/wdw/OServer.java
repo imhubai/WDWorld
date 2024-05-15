@@ -15,7 +15,6 @@ import java.util.Queue;
 
 /**
  * OServer 类负责处理服务器的初始化、消息注册、消息接收与分发。
- *
  */
 public class OServer {
 
@@ -62,9 +61,9 @@ public class OServer {
 
         try {
             server.bind(tcpPORT, udpPORT);
-            System.out.println("Server has ben started on TCP_PORT: " + tcpPORT + " UDP_PORT: " + udpPORT);
+            ServerConnection.logger.info("Server has ben started on TCP_PORT: " + tcpPORT + " UDP_PORT: " + udpPORT);
         } catch (IOException e) {
-            System.out.println(e);
+            ServerConnection.logger.error(e);
         }
     }
 
@@ -72,9 +71,7 @@ public class OServer {
      * 解析并处理消息队列中的消息。
      */
     public void parseMessage() {
-        if (connectionQueue.isEmpty() || messageQueue.isEmpty())
-            return;
-
+        if (connectionQueue.isEmpty() || messageQueue.isEmpty()) return;
         // 遍历处理所有待处理消息
         for (int i = 0; i < messageQueue.size(); i++) {
             Connection con = connectionQueue.poll();
@@ -85,12 +82,15 @@ public class OServer {
                 messageListener.loginReceived(con, m);
             } else if (message instanceof NewbieMessage) {
                 NewbieMessage m = (NewbieMessage) message;
-                messageListener.newPlayerReceived(m);
+                messageListener.newPlayerReceived(con, m);
             } else if (message instanceof LogoutMessage) {
                 LogoutMessage m = (LogoutMessage) message;
                 messageListener.logoutReceived(m);
-            } else if (message instanceof PositionMessage) {
-                PositionMessage m = (PositionMessage) message;
+            } else if (message instanceof ChatMessage) {
+                ChatMessage m = (ChatMessage) message;
+                messageListener.chatReceived(m);
+            } else if (message instanceof PlayerMovedMessage) {
+                PlayerMovedMessage m = (PlayerMovedMessage) message;
                 messageListener.playerMovedReceived(m);
             }
         }
@@ -102,15 +102,15 @@ public class OServer {
     private void registerClasses() {
         this.server.getKryo().register(LoginMessage.class);
         this.server.getKryo().register(LogoutMessage.class);
-        this.server.getKryo().register(GameWorldMessage.class);
-        this.server.getKryo().register(PositionMessage.class);
-        this.server.getKryo().register(PositionMessage.DIRECTION.class);
         this.server.getKryo().register(NewbieMessage.class);
         this.server.getKryo().register(Player.class);
         this.server.getKryo().register(PlayerState.class);
         this.server.getKryo().register(Vector2.class);
         this.server.getKryo().register(ArrayList.class);
-
+        this.server.getKryo().register(ChatChannel.class);
+        this.server.getKryo().register(ChatMessage.class);
+        this.server.getKryo().register(WorldMessage.class);
+        this.server.getKryo().register(PlayerMovedMessage.class);
         this.server.getKryo().register(float[].class);
     }
 

@@ -16,16 +16,17 @@ public enum PlayerState {
     public Vector2 calculateDirectionVector() {
         switch (this) {
             case WALKING_N:
-            case STANDING_N:
                 return new Vector2(0, 1);
-            case WALKING_S:
             case STANDING_S:
+            case STANDING_N:
+            case STANDING_E:
+            case STANDING_W:
+                return new Vector2(0, 0);
+            case WALKING_S:
                 return new Vector2(0, -1);
             case WALKING_E:
-            case STANDING_E:
                 return new Vector2(1, 0);
             case WALKING_W:
-            case STANDING_W:
                 return new Vector2(-1, 0);
             case WALKING_NE:
                 return new Vector2(ONE_ON_ROOT_TWO, ONE_ON_ROOT_TWO);

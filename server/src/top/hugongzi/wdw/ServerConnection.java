@@ -1,6 +1,5 @@
 package top.hugongzi.wdw;
 
-import com.badlogic.gdx.math.Vector2;
 import com.esotericsoftware.kryonet.Connection;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,8 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * 服务器连接类，负责处理客户端的登录、退出、聊天和新手创建等消息。
+ */
 public class ServerConnection implements MessageListener {
-    public Logger logger = LogManager.getLogger();
+    public static Logger logger = LogManager.getLogger();
     private ServerWork wdWserver;
     private int tcpPORT, udpPORT;
     private List<Player> players;
@@ -22,6 +24,13 @@ public class ServerConnection implements MessageListener {
     private float deltaTime = 0;
     private LoginController loginController;
 
+    /**
+     * 构造函数，初始化服务器连接。
+     *
+     * @param wdWserver 服务器工作类实例。
+     * @param tcpPORT   TCP端口号。
+     * @param udpPORT   UDP端口号。
+     */
     public ServerConnection(ServerWork wdWserver, int tcpPORT, int udpPORT) {
         this.wdWserver = wdWserver;
         this.tcpPORT = tcpPORT;
@@ -33,6 +42,8 @@ public class ServerConnection implements MessageListener {
         loginController = new LoginController();
     }
 
+    // Getter 和 Setter 方法
+
     public ServerWork getWdWserver() {
         return wdWserver;
     }
@@ -41,63 +52,68 @@ public class ServerConnection implements MessageListener {
         this.wdWserver = wdWserver;
     }
 
+    /**
+     * 更新服务器状态，包括处理网络消息和更新玩家状态。
+     *
+     * @param deltaTime 上一帧到这一帧的时间差。
+     */
     public void update(float deltaTime) {
         this.deltaTime = deltaTime;
         oServer.parseMessage();
-        players.forEach(p -> p.update(deltaTime));
-        GameWorldMessage m = MessageCreator.generateGWMMessage(players);
-        oServer.sendToAllUDP(m);
+        //players.forEach(p -> p.update(deltaTime));
+        WorldMessage worldMessage = new WorldMessage();
+        worldMessage.setPlayermap(players);
+        oServer.sendToAllUDP(worldMessage);
     }
 
+    /**
+     * 处理登录消息。
+     *
+     * @param con 连接对象。
+     * @param m   登录消息。
+     */
     @Override
     public void loginReceived(Connection con, LoginMessage m) {
         String id = m.getId();
         loginController.loginID(id);
         Player player = save.loadSave(id);
-        //玩家存档不存在
+        // 如果玩家存档不存在，则发送新手消息
         if (player == null) {
             oServer.sendToTCP(con.getID(), new NewbieMessage());
             return;
         }
+        player.setConid(con.getID());
         m.setPlayer(player);
-        System.out.println("Login Message recieved from : " + id);
+        if (!players.contains(player)) {
+            players.add(player);
+        }
+        ServerConnection.logger.info("Login Message recieved from : " + id);
         oServer.sendToUDP(con.getID(), m);
     }
 
+    /**
+     * 处理退出消息。
+     *
+     * @param m 退出消息。
+     */
     @Override
     public void logoutReceived(LogoutMessage m) {
         players.stream().filter(p -> Objects.equals(p.getId(), m.getId())).findFirst().ifPresent(p -> {
+            save.saveplayer(p);
             players.remove(p);
             loginController.logoutid(p.getId());
         });
-        System.out.println("Logout Message recieved from : " + m.getId() + " Size: " + players.size());
+        ServerConnection.logger.info("Logout Message recieved from : " + m.getId() + " Size: " + players.size());
     }
 
+    /**
+     * 处理新建玩家消息。
+     *
+     * @param con 连接对象。
+     * @param m   新建玩家消息。
+     */
     @Override
-    public void playerMovedReceived(PositionMessage move) {
-        players.stream().filter(p -> Objects.equals(p.getId(), move.getId())).findFirst().ifPresent(p -> {
-            Vector2 v = p.getBody().getPosition();
-            switch (move.getDirection()) {
-                case LEFT:
-                    v.x -= deltaTime * 200;
-                    break;
-                case RIGHT:
-                    v.x += deltaTime * 200;
-                    break;
-                case UP:
-                    v.y -= deltaTime * 200;
-                    break;
-                case DOWN:
-                    v.y += deltaTime * 200;
-                    break;
-                default:
-                    break;
-            }
-        });
-    }
-
-    @Override
-    public void newPlayerReceived(NewbieMessage m) {
+    public void newPlayerReceived(Connection con, NewbieMessage m) {
         Player newPlayer = m.getPlayer();
         newPlayer.setItems(new ArrayList<>());
         newPlayer.setSkills(new ArrayList<>());
@@ -134,7 +150,49 @@ public class ServerConnection implements MessageListener {
         newPlayer.setMap("Maps/map003.tmx");
         newPlayer.setX(1000f);
         newPlayer.setY(1000f);
-
+        newPlayer.setConid(con.getID());
         save.saveplayer(newPlayer);
+        LoginMessage loginMessage = new LoginMessage();
+        loginMessage.setPlayer(newPlayer);
+        loginController.loginID(newPlayer.getId());
+        oServer.sendToTCP(con.getID(), loginMessage);
+    }
+
+    /**
+     * 处理聊天消息。
+     *
+     * @param m 聊天消息。
+     */
+    @Override
+    public void chatReceived(ChatMessage m) {
+        // 根据频道类型将消息发送给相应的玩家
+        switch (m.getChannel()) {
+            case CHANNEL_GLOBAL:
+            case CHANNEL_SYSTEM:
+            case CHANNEL_FAKE:
+                oServer.sendToAllTCP(m);
+                return;
+            case CHANNEL_REGION:
+                for (Player onlineplayer : players) {
+                    if (Objects.equals(onlineplayer.getMap(), m.getRegionMap()))
+                        oServer.sendToTCP(onlineplayer.getConid(), m);
+                }
+            case CHANNEL_PRIVATE:
+                for (Player onlineplayer : players) {
+                    if (Objects.equals(onlineplayer.getId(), m.getTargetPlayerID()) || Objects.equals(onlineplayer.getName(), m.getTargetPlayerID()))
+                        oServer.sendToTCP(onlineplayer.getConid(), m);
+                }
+        }
+    }
+
+    @Override
+    public void playerMovedReceived(PlayerMovedMessage m) {
+        players.stream().filter(p -> Objects.equals(p.getId(), m.getPlayerid())).findFirst().ifPresent(p -> {
+            p.setX(m.getX());
+            p.setY(m.getY());
+            //logger.info(m.getX()+" "+m.getY());
+            p.setCurrentVelocity(m.getCurrentVelocity());
+            p.setCurrentState(m.getCurrentState());
+        });
     }
 }

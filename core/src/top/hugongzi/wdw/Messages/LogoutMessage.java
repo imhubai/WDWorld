@@ -11,5 +11,4 @@ public class LogoutMessage {
     public void setId(String id) {
         this.id = id;
     }
-
 }

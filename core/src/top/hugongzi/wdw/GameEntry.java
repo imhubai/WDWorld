@@ -33,7 +33,7 @@ public class GameEntry extends Game implements InputProcessor {
 
     public static SpriteBatch batch;
     public static ArrayMap<String, BitmapFont> font;
-    public static AbstractScreen maingame;
+    public static MainGame maingame;
     public static ScreenLogin screenLogin;
     public static ScreenSplash screenSplash;
     public static ScreenOverlap screenOverlap;

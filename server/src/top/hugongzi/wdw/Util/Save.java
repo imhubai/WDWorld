@@ -1,6 +1,7 @@
 package top.hugongzi.wdw.Util;
 
 import com.badlogic.gdx.utils.Json;
+import top.hugongzi.wdw.ServerConnection;
 import top.hugongzi.wdw.entity.Player.Player;
 
 import java.io.File;
@@ -15,7 +16,7 @@ public class Save {
         for (String dir : dirs) {
             File d = new File(dir);
             if (d.mkdir()) {
-                System.out.println(dir + " not found,created.");
+                ServerConnection.logger.info(dir + " not found,created.");
             }
         }
     }
@@ -24,13 +25,13 @@ public class Save {
         String dir = "users/" + id.charAt(0) + "/";
         File d = new File(dir);
         if (d.mkdir()) {
-            System.out.println(dir + " not found,created.");
+            ServerConnection.logger.info(dir + " not found,created.");
             return null;
         }
         dir += id + ".json";
         File save = new File(dir);
         if (!save.exists()) {
-            System.out.println(dir + " not found.");
+            ServerConnection.logger.info(dir + " not found.");
             return null;
         }
         StringBuilder jsonData = new StringBuilder();
@@ -51,7 +52,7 @@ public class Save {
         String dir = "users/";
         File alphaname = new File(dir + player.getId().charAt(0));
         if (alphaname.mkdir()) {
-            System.out.println(dir + " not found,created.");
+            ServerConnection.logger.info(dir + " not found,created.");
         }
         dir += player.getId().charAt(0) + "/" + player.getId() + ".json";
         File file = new File(dir);
@@ -59,7 +60,7 @@ public class Save {
             try {
                 file.createNewFile();
             } catch (IOException e) {
-                System.out.println(e);
+                ServerConnection.logger.info(e);
             }
         }
         FileOutputStream fos;
@@ -70,7 +71,7 @@ public class Save {
             fos.write(jsonData.getBytes());
             fos.close();
         } catch (IOException e) {
-            System.out.println(e);
+            ServerConnection.logger.info(e);
         }
     }
 }

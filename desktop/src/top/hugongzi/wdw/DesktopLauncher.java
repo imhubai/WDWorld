@@ -24,7 +24,7 @@ public class DesktopLauncher {
         config.setForegroundFPS(60);
         config.setIdleFPS(10);
         config.setWindowedMode(1920, 1080);
-        config.useVsync(true);
+        config.useVsync(false);
         config.setTitle("WDWorld");
 
         //Hdpi

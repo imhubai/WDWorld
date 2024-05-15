@@ -11,7 +11,7 @@ public class WDWserver {
     public static int TCPport = 22333;  // TCP端口号，默认值为22333
     public static int UDPport = 22334;  // UDP端口号，默认值为22334
     private static final Object lock = new Object();  // 用于同步的锁对象
-    static long startTime = System.nanoTime();  // 记录程序启动时间
+    public static long startTime = System.nanoTime();  // 记录程序启动时间
 
     /**
      * 程序入口点，启动服务器。
@@ -52,7 +52,7 @@ public class WDWserver {
                 Thread.currentThread().interrupt();
                 break;
             } catch (Exception e) {
-                System.err.println("Error in ticker loop: " + e.getMessage());
+                ServerConnection.logger.error("Error in ticker loop: " + e.getMessage());
             }
         }
     }

@@ -2,6 +2,9 @@ package top.hugongzi.wdw.core;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -11,6 +14,7 @@ import top.hugongzi.wdw.entity.Player.PlayerState;
 import top.hugongzi.wdw.gui.Screens.MainGame;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class OClient {
 
@@ -49,10 +53,16 @@ public class OClient {
                         OClient.this.game.loginReceieved(m);
                     } else if (object instanceof LogoutMessage) {
                         LogoutMessage m = (LogoutMessage) object;
-                        //OClient.this.game.logoutReceieved(m);
+                        OClient.this.game.logoutReceieved(m);
                     } else if (object instanceof NewbieMessage) {
                         NewbieMessage m = (NewbieMessage) object;
                         OClient.this.game.newbieReceieved(m);
+                    } else if (object instanceof ChatMessage) {
+                        ChatMessage m = (ChatMessage) object;
+                        OClient.this.game.chatReceieved(m);
+                    } else if (object instanceof WorldMessage) {
+                        WorldMessage m = (WorldMessage) object;
+                        OClient.this.game.worldMessageReceieved(m);
                     }
                 });
 
@@ -61,22 +71,22 @@ public class OClient {
         });
     }
 
-    /**
-     * This function register every class that will be sent back and forth between
-     * client and server.
-     */
     private void registerClasses() {
-        // messages
         this.client.getKryo().register(LoginMessage.class);
         this.client.getKryo().register(LogoutMessage.class);
-        this.client.getKryo().register(GameWorldMessage.class);
-        this.client.getKryo().register(PositionMessage.class);
-        this.client.getKryo().register(PositionMessage.DIRECTION.class);
         this.client.getKryo().register(NewbieMessage.class);
         this.client.getKryo().register(Player.class);
         this.client.getKryo().register(PlayerState.class);
         this.client.getKryo().register(Vector2.class);
-        // primitive arrays
+        this.client.getKryo().register(ArrayList.class);
+        this.client.getKryo().register(ChatChannel.class);
+        this.client.getKryo().register(ChatMessage.class);
+        this.client.getKryo().register(WorldMessage.class);
+        this.client.getKryo().register(PlayerMovedMessage.class);
+        this.client.getKryo().register(Body.class);
+        this.client.getKryo().register(Array.class);
+        this.client.getKryo().register(Object[].class);
+        this.client.getKryo().register(Fixture.class);
         this.client.getKryo().register(float[].class);
 
     }

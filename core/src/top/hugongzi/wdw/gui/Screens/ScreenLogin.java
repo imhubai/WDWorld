@@ -421,7 +421,7 @@ public class ScreenLogin extends AbstractScreen {
 
             @Override
             public void failed(Throwable throwable) {
-                msgwindow("Server error\n" + throwable.toString());
+                msgwindow("Network error\n" + throwable.toString());
             }
 
             @Override

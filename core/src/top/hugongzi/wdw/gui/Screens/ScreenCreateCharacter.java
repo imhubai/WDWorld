@@ -265,6 +265,8 @@ public class ScreenCreateCharacter extends AbstractScreen {
                 } else if (Pattern.matches("^[\\u4E00-\\u9FA5A-Za-z0-9_]+$", textField.getText())) {
                     name = textField.getText();
                     createplayer();
+                } else {
+                    msgwindow("name cannot include symbol expect'_' !");
                 }
             }
         });
@@ -287,6 +289,8 @@ public class ScreenCreateCharacter extends AbstractScreen {
         player.setMale(ismale);
         player.setBornplace(bornplace);
         mainGame.registerPlayer(player);
+        GameEntry.addScreen(mainGame);
+        remove();
     }
 
     public int cal_point(int p, boolean isadd) {

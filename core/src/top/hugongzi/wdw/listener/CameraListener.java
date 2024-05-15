@@ -14,7 +14,7 @@ public class CameraListener extends InputListener {
 
     @Override
     public boolean scrolled(InputEvent event, float x, float y, float amountX, float amountY) {
-        Log.i(amountY+"ca"+camera.zoom);
+        Log.i(amountY + " " + camera.zoom);
         if (amountY > 0f) {
             if (camera.zoom < 0.5f) {
                 camera.zoom += 0.05f;
