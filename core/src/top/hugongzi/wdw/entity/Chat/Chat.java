@@ -1,4 +1,4 @@
-package top.hugongzi.wdw.core;
+package top.hugongzi.wdw.entity.Chat;
 
 import com.badlogic.gdx.graphics.Color;
 

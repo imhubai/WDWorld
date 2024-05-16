@@ -16,7 +16,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import top.hugongzi.wdw.GameEntry;
 import top.hugongzi.wdw.Messages.*;
-import top.hugongzi.wdw.core.*;
+import top.hugongzi.wdw.core.GameMap;
+import top.hugongzi.wdw.core.Log;
+import top.hugongzi.wdw.core.OClient;
+import top.hugongzi.wdw.core.Util;
+import top.hugongzi.wdw.entity.Chat.*;
 import top.hugongzi.wdw.entity.Player.Player;
 import top.hugongzi.wdw.gui.Buttons.GameGUI;
 import top.hugongzi.wdw.listener.CameraListener;
@@ -45,6 +49,7 @@ public class MainGame extends AbstractScreen {
     Player player;
     Label chatlabel;
     boolean ismaprender = false;
+    private ArrayList<Chat> chatList;
     private OrthographicCamera camera;
 
     private MainGame(String serverAddress, String serverName, String phpserverurl, String username, String name) {
@@ -54,8 +59,8 @@ public class MainGame extends AbstractScreen {
         this.phpserverurl = phpserverurl;
         this.username = username;
         this.name = name;
+        chatList = new ArrayList<>();
         serverplayers = new Hashtable<>();
-        chatFactory = new ChatFactory();
         this.create();
         GameEntry.screenSplash.remove();
         GameEntry.screenLogin.remove();
@@ -71,6 +76,14 @@ public class MainGame extends AbstractScreen {
             }
         }
         return instance;
+    }
+
+    public ArrayList<Chat> getChatList() {
+        return chatList;
+    }
+
+    public void setChatList(ArrayList<Chat> chatList) {
+        this.chatList = chatList;
     }
 
     @Override
@@ -336,6 +349,7 @@ public class MainGame extends AbstractScreen {
         this.remove();
     }
 
+
     public void sendChat(ChatChannel channel, String msg) {
         if (channel == ChatChannel.CHANNEL_PRIVATE) return;
         if (channel == ChatChannel.CHANNEL_GLOBAL) msg = player.getName() + ":" + msg;
@@ -357,13 +371,36 @@ public class MainGame extends AbstractScreen {
     }
 
     public void chatReceived(ChatMessage m) {
-        Chat chat = chatFactory.addChat(m);
+        ChatFactory chatFactory;
+        switch (m.getChannel()) {
+            case CHANNEL_GLOBAL:
+            case CHANNEL_PRIVATE:
+                chatFactory = new ChatFactory(new DefaultChatFactory());
+                chatFactory.addChat(m);
+                break;
+            case CHANNEL_FAKE:
+                chatFactory = new ChatFactory(new FakeChatFactory());
+                chatFactory.addChat(m);
+                break;
+            case CHANNEL_SYSTEM:
+                chatFactory = new ChatFactory(new SystemChatFactory());
+                chatFactory.addChat(m);
+                break;
+            case CHANNEL_HELP:
+                chatFactory = new ChatFactory(new HelpChatFactory());
+                chatFactory.addChat(m);
+                break;
+            case CHANNEL_REGION:
+                chatFactory = new ChatFactory(new RegionChatFactory());
+                chatFactory.addChat(m);
+                break;
+        }
         StringBuilder sb = new StringBuilder();
         int chatmaxnum = 5;
         ArrayList<Chat> chats = new ArrayList<>();
-        if (!chatFactory.chatList.isEmpty()) {
-            for (int i = chatFactory.chatList.size() - 1; i >= 0 && chatmaxnum > 0; i--) {
-                chats.add(chatFactory.chatList.get(i));
+        if (!chatList.isEmpty()) {
+            for (int i = chatList.size() - 1; i >= 0 && chatmaxnum > 0; i--) {
+                chats.add(chatList.get(i));
                 chatmaxnum--;
             }
         }
