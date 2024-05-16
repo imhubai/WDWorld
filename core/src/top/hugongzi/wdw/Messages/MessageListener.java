@@ -9,7 +9,7 @@ public interface MessageListener {
 
     public void newPlayerReceived(Connection con, NewbieMessage m);
 
-    public void chatReceived(ChatMessage m);
+    public void chatReceived(Connection con, ChatMessage m);
 
     public void playerMovedReceived(PlayerMovedMessage m);
 }

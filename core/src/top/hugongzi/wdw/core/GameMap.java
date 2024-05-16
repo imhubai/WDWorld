@@ -153,6 +153,6 @@ public class GameMap {
         stage.getViewport().apply();
         mapRenderer.setView((OrthographicCamera) stage.getViewport().getCamera());
         mapRenderer.render();
-        worldRenderer.render(world, stage.getViewport().getCamera().combined);
+        //worldRenderer.render(world, stage.getViewport().getCamera().combined);
     }
 }

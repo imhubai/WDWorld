@@ -50,19 +50,19 @@ public class OClient {
                 Gdx.app.postRunnable(() -> {
                     if (object instanceof LoginMessage) {
                         LoginMessage m = (LoginMessage) object;
-                        OClient.this.game.loginReceieved(m);
+                        OClient.this.game.loginReceived(m);
                     } else if (object instanceof LogoutMessage) {
                         LogoutMessage m = (LogoutMessage) object;
-                        OClient.this.game.logoutReceieved(m);
+                        OClient.this.game.logoutReceived(m);
                     } else if (object instanceof NewbieMessage) {
                         NewbieMessage m = (NewbieMessage) object;
-                        OClient.this.game.newbieReceieved(m);
+                        OClient.this.game.newbieReceived(m);
                     } else if (object instanceof ChatMessage) {
                         ChatMessage m = (ChatMessage) object;
-                        OClient.this.game.chatReceieved(m);
+                        OClient.this.game.chatReceived(m);
                     } else if (object instanceof WorldMessage) {
                         WorldMessage m = (WorldMessage) object;
-                        OClient.this.game.worldMessageReceieved(m);
+                        OClient.this.game.worldMessageReceived(m);
                     }
                 });
 

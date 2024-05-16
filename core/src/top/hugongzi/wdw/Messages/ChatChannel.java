@@ -7,4 +7,5 @@ public enum ChatChannel {
     CHANNEL_REGION,
     CHANNEL_SYSTEM,
     CHANNEL_FAKE,
+    CHANNEL_HELP
 }

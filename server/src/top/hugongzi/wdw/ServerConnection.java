@@ -164,7 +164,7 @@ public class ServerConnection implements MessageListener {
      * @param m 聊天消息。
      */
     @Override
-    public void chatReceived(ChatMessage m) {
+    public void chatReceived(Connection con, ChatMessage m) {
         // 根据频道类型将消息发送给相应的玩家
         switch (m.getChannel()) {
             case CHANNEL_GLOBAL:
@@ -178,10 +178,9 @@ public class ServerConnection implements MessageListener {
                         oServer.sendToTCP(onlineplayer.getConid(), m);
                 }
             case CHANNEL_PRIVATE:
-                for (Player onlineplayer : players) {
-                    if (Objects.equals(onlineplayer.getId(), m.getTargetPlayerID()) || Objects.equals(onlineplayer.getName(), m.getTargetPlayerID()))
-                        oServer.sendToTCP(onlineplayer.getConid(), m);
-                }
+                players.stream().filter(p -> Objects.equals(p.getId(), m.getTargetPlayerID())).findFirst().ifPresent(p -> {
+                    oServer.sendToTCP(p.getConid(), m);
+                });
         }
     }
 
