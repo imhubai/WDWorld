@@ -88,7 +88,7 @@ public class OServer {
                 messageListener.logoutReceived(m);
             } else if (message instanceof ChatMessage) {
                 ChatMessage m = (ChatMessage) message;
-                messageListener.chatReceived(m);
+                messageListener.chatReceived(con, m);
             } else if (message instanceof PlayerMovedMessage) {
                 PlayerMovedMessage m = (PlayerMovedMessage) message;
                 messageListener.playerMovedReceived(m);

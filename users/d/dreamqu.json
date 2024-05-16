@@ -1,5 +1,4 @@
 {
-  currentState: STANDING_W,
   items: [],
   skills: [],
   friendid: [],
@@ -33,7 +32,7 @@
   banchat: false,
   birthday: 1715759107711,
   map: Maps/map003.tmx,
-  x: 506.84338,
-  y: 1562.9575,
-  Conid: 2
+  x: 700.9673,
+  y: 527.6379,
+  Conid: 4
 }

@@ -127,7 +127,7 @@ public class PlayerActor extends Actor {
         this.setPosition(player.getBody().getPosition().x - 32 / 2f - 10, player.getBody().getPosition().y - 32 / 2f);
         player.setX(getX());
         player.setY(getY());
-        namelabel.setPosition(getX() + sprite.getWidth() / 2 - 32 / 2f, getY() + sprite.getWidth() + 50);
+        namelabel.setPosition(getX() + namelabel.getPrefWidth() / 2 - 32 / 2f + 10, getY() + sprite.getWidth() + namelabel.getPrefHeight() + 32 / 2f);
     }
 
     public void updatePlayerState(PlayerState newState, Vector2 newVelocity) {
