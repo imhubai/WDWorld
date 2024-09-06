@@ -16,8 +16,7 @@ import java.util.Queue;
 /**
  * OServer 类负责处理服务器的初始化、消息注册、消息接收与分发。
  */
-public class OServer {
-
+public class OServer implements Observer {
     private final int tcpPORT, udpPORT;
     private Server server;
     private ServerConnection serverConnection;
@@ -61,7 +60,6 @@ public class OServer {
 
         try {
             server.bind(tcpPORT, udpPORT);
-            ServerConnection.logger.info("Server has ben started on TCP_PORT: " + tcpPORT + " UDP_PORT: " + udpPORT);
         } catch (IOException e) {
             ServerConnection.logger.error(e);
         }
@@ -94,6 +92,11 @@ public class OServer {
                 messageListener.playerMovedReceived(m);
             }
         }
+    }
+
+    @Override
+    public void update(String message) {
+        ServerConnection.logger.info(message);
     }
 
     /**

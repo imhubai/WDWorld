@@ -37,6 +37,7 @@ public class ServerConnection implements MessageListener {
         this.udpPORT = udpPORT;
         logger.info("服务器ServerConnection初始化");
         oServer = new OServer(this, tcpPORT, udpPORT);
+        wdWserver.registerObserver(oServer);
         players = new ArrayList<>();
         save = new Save();
         loginController = new LoginController();
@@ -152,10 +153,6 @@ public class ServerConnection implements MessageListener {
         newPlayer.setY(1000f);
         newPlayer.setConid(con.getID());
         save.saveplayer(newPlayer);
-        LoginMessage loginMessage = new LoginMessage();
-        loginMessage.setPlayer(newPlayer);
-        loginController.loginID(newPlayer.getId());
-        oServer.sendToTCP(con.getID(), loginMessage);
     }
 
     /**

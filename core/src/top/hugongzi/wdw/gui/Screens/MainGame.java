@@ -322,6 +322,10 @@ public class MainGame extends AbstractScreen {
         newbieMessage.setId(username);
         newbieMessage.setPlayer(player);
         client.sendUDP(newbieMessage);
+
+        LoginMessage loginMessage = new LoginMessage();
+        loginMessage.setId(username);
+        client.sendUDP(loginMessage);
     }
 
     public void loginReceived(LoginMessage m) {
@@ -427,7 +431,6 @@ public class MainGame extends AbstractScreen {
                     serverplayers.get(i.getId()).setX(i.getX());
                     serverplayers.get(i.getId()).setY(i.getY());
                     serverplayers.get(i.getId()).getPlayerActor().updatePlayerState(i.getCurrentState(), i.getCurrentState().calculateDirectionVector());
-                    serverplayers.get(i.getId()).getPlayerActor().setPosition(i.getX(), i.getY());
                 } else if (Objects.equals(i.getId(), player.getId())) {
                     if (!Util.equalsEpsilon(i.getX(), player.getX(), 0.01f)) {
                         moved();

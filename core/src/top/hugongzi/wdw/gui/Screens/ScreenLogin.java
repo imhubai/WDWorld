@@ -35,7 +35,7 @@ public class ScreenLogin extends AbstractScreen {
     Group root;
     Label msglabel, label_server_title;
     String version = "1.0";
-    String phpserverurl = "https://hugongzi.top/wdwgame/";
+    String phpserverurl = "http://hugongzi.top/wdwgame/";
     Hashtable<String, String> gameurl = new Hashtable<>();
     String username, password, name, email;
     int basewidth = GameEntry.GAMEWIDTH / 5 * 3, baseheight = 0;
